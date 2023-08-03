@@ -1,0 +1,89 @@
+<head>
+    <title>Trigger GitLab Pipelines</title>
+    <script>
+        function validateForm() {
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            var checkedCount = 0;
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    checkedCount++;
+                }
+            }
+            if (checkedCount === 0) {
+                alert("Please select at least one option.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #4285F4;
+            text-align: center;
+        }
+
+        form {
+            width: 400px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        input[type="submit"] {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4285F4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #3074ED;
+        }
+    </style>
+</head>
+<body>
+    <h1>Trigger GitLab Pipelines</h1>
+    <form method="post" onsubmit="return validateForm();">
+        {% csrf_token %}
+        <label for="SIEMxdr">
+            <input type="checkbox" name="SIEMxdr" id="SIEMxdr" value="SIEMxdr">
+            SIEMxdr
+        </label>
+        <br>
+        <label for="Monitoring">
+            <input type="checkbox" name="Monitoring" id="Monitoring" value="Monitoring">
+            Monitoring
+        </label>
+        <br>
+        <label for="Logging">
+            <input type="checkbox" name="Logging" id="Logging" value="Logging">
+            Logging
+        </label>
+        <br>
+        <input type="submit" value="Trigger Pipelines">
+    </form>
+</body>
+</html>
