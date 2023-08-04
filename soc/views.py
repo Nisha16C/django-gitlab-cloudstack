@@ -293,10 +293,10 @@
 #     pipeline_status = get_pipeline_status_by_name(base_url, project_id, headers, pipeline_name)
 
 #     return JsonResponse({"status": pipeline_status})
-
 import requests
 from django.shortcuts import render
 from django.http import JsonResponse
+
 
 def trigger_pipeline_view(request):
     if request.method == 'POST':
@@ -340,8 +340,6 @@ def get_latest_pipeline_status(base_url, project_id, headers):
         raise ValueError(f"Error fetching pipelines: {response.status_code}, {response.json()}")
 
     pipelines = response.json()
-    print(pipelines)  # Add this line to see the API response
-
     if not pipelines:
         return 'No Pipelines Found'
 
@@ -350,8 +348,33 @@ def get_latest_pipeline_status(base_url, project_id, headers):
 
     return latest_status
 
+def get_latest_pipeline_artifacts(base_url, project_id, headers):
+    response = requests.get(base_url + f"projects/{project_id}/pipelines", headers=headers, verify=False)
 
-def get_latest_pipeline_status_for_name(request):
+    if response.status_code != 200:
+        raise ValueError(f"Error fetching pipelines: {response.status_code}, {response.json()}")
+
+    pipelines = response.json()
+    if not pipelines:
+        return []
+
+    latest_pipeline_id = pipelines[0]['id']
+    response = requests.get(base_url + f"projects/{project_id}/pipelines/{latest_pipeline_id}/jobs", headers=headers, verify=False)
+
+    if response.status_code != 200:
+        raise ValueError(f"Error fetching pipeline jobs: {response.status_code}, {response.json()}")
+
+    jobs = response.json()
+    artifacts = []
+
+    for job in jobs:
+        response = requests.get(base_url + f"projects/{project_id}/jobs/{job['id']}/artifacts", headers=headers, verify=False)
+        if response.status_code == 200:
+            artifacts.append({"filename": job['artifacts_file']['filename']})
+
+    return artifacts
+
+def get_latest_pipeline_status_and_artifacts(request):
     # Replace these variables with your actual GitLab project ID and private token
     project_id = "109"
     private_token = "Brd96ShxJsCfqZsL-3ZB"
@@ -361,5 +384,8 @@ def get_latest_pipeline_status_for_name(request):
     # Get the latest pipeline status
     pipeline_status = get_latest_pipeline_status(base_url, project_id, headers)
 
+    # Get the artifacts for the latest pipeline
+    artifacts = get_latest_pipeline_artifacts(base_url, project_id, headers)
 
-    return JsonResponse({"status": pipeline_status})
+    return JsonResponse({"status": pipeline_status, "artifacts": artifacts})
+
