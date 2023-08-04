@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pipeline Status</title>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+    {% if pipeline_status %}
+        <h2>Pipeline Status:</h2>
+        <ul>
+            {% for pipeline_name, status in pipeline_status.items %}
+                <li id="{{ pipeline_name }}-status">{{ pipeline_name }}: {{ status }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No pipeline status available.</p>
+    {% endif %}
+
+    <script>
+        // Function to fetch pipeline status and update the page
+        function updatePipelineStatus() {
+            const pipelineNames = {{ pipeline_names|safe }};
+            const url = `/get_pipeline_status/?pipeline_name=${pipelineNames.join('&pipeline_name=')}`;
+            fetch(url, { method: 'GET' })
+            .then(response => response.json())
+            .then(data => {
+                for (const [pipelineName, status] of Object.entries(data)) {
+                    const statusElement = document.getElementById(`${pipelineName}-status`);
+                    if (statusElement) {
+                        statusElement.innerText = `${pipelineName}: ${status}`;
+                    }
+                }
+            });
+        }
+
+        // Call the function on page load
+        updatePipelineStatus();
+        // Call the function every 5 seconds to update the status
+        setInterval(updatePipelineStatus, 5000);
+    </script>
+</body>
+</html>

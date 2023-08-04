@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pipeline Result</title>
+    <title>Installation Result</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,11 +25,65 @@
     </style>
 </head>
 <body>
-    <h1>Pipeline Result</h1>
+    <h1>Tool Installation Result</h1>
     <p>{{ message }}</p>
-</body>
 
-</html>
+    <h2>Tool Installation in Progess:</h2>
+    <ul id="pipeline-status-list">
+        {% for pipeline_name in pipeline_names %}
+            <li id="{{ pipeline_name }}-status">{{ pipeline_name }}: Pending</li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        // Function to fetch pipeline status and update the page
+        function updatePipelineStatus() {
+            const pipelineNames = {% autoescape off %}{{ pipeline_names|safe }}{% endautoescape %};
+            pipelineNames.forEach(pipelineName => {
+                const url = `/get_pipeline_status/?pipeline_name=${encodeURIComponent(pipelineName)}`;
+                fetch(url, { method: 'GET' })
+                .then(response => response.json())
+                .then(data => {
+                    const statusElement = document.getElementById(`${pipelineName}-status`);
+                    if (statusElement) {
+                        statusElement.innerText = `${pipelineName}: ${data.status}`;
+                    }
+                });
+            });
+
+            // Call the function again after 5 seconds (adjust as needed)
+            setTimeout(updatePipelineStatus, 5000);
+        }
+
+        // Call the function on page load
+        updatePipelineStatus();
+    </script>
+<!-- <body>
+    <h1>{{ message }}</h1>
+    {% if pipeline_status %}
+        <h2>Pipeline Status:</h2>
+        <ul>
+            {% for pipeline_name, status in pipeline_status.items %}
+                <li>{{ pipeline_name }}: {{ status }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body> -->
+
+</html> 
+<!-- <body>
+    <h1>{{ message }}</h1>
+    {% if pipeline_status %}
+        <h2>Pipeline Status:</h2>
+        <ul>
+            {% for pipeline_name, status in pipeline_status.items %}
+                <li id="{{ pipeline_name }}-status">{{ pipeline_name }}: {{ status }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+</body>
+</html> -->
 
 <!-- <body>
     <h1>Pipeline Status</h1>
@@ -37,3 +91,49 @@
         <p>{{ status }}</p>
     {% endfor %}
 </body> -->
+
+<!-- result.html -->
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Pipeline Status</title>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+    {% if pipeline_status %}
+        <h2>Pipeline Status:</h2>
+        <ul>
+            {% for pipeline_name, status in pipeline_status.items %}
+                <li id="{{ pipeline_name }}-status">{{ pipeline_name }}: {{ status }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <script>
+        // Parse the pipeline status JSON data
+        const pipelineStatusData = JSON.parse('{{ pipeline_status|escapejs }}');
+
+        // Function to update pipeline status
+        function updatePipelineStatus() {
+            Object.keys(pipelineStatusData).forEach(pipeline_name => {
+                const url = '/get_pipeline_status/?pipeline_name=' + encodeURIComponent(pipeline_name);
+
+                fetch(url, { method: 'GET' })
+                .then(response => response.json())
+                .then(data => {
+                    const statusElement = document.getElementById(pipeline_name + '-status');
+                    if (statusElement) {
+                        statusElement.innerText = pipeline_name + ': ' + data.status;
+                    }
+                    if (data.status === 'running' || data.status === 'pending') {
+                        setTimeout(updatePipelineStatus, 5000);
+                    }
+                });
+            });
+        }
+
+        // Call the function on page load
+        updatePipelineStatus();
+    </script>
+</body>
+</html> -->

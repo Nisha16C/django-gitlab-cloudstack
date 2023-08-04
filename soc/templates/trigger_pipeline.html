@@ -1,5 +1,6 @@
+<!DOCTYPE html>
 <head>
-    <title>Trigger GitLab Pipelines</title>
+    <title>Select Tools</title>
     <script>
         function validateForm() {
             var checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -65,7 +66,7 @@
     </style>
 </head>
 <body>
-    <h1>Trigger GitLab Pipelines</h1>
+    <h1>Select Tools</h1>
     <form method="post" onsubmit="return validateForm();">
         {% csrf_token %}
         <label for="SIEMxdr">
@@ -83,7 +84,7 @@
             Logging
         </label>
         <br>
-        <input type="submit" value="Trigger Pipelines">
+        <input type="submit" value="Install">
     </form>
 </body>
 </html>
