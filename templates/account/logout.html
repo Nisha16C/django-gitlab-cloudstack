@@ -1,0 +1,74 @@
+{% load i18n %}
+{% block content %}
+<style>
+    body {
+        font-family: "Helvetica, Arial, sans-serif";
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        }
+
+    .card {
+        border: none;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        max-width: 400px;
+        width: 100%;
+        border-radius: 10px;
+    }
+
+    .card-header {
+        background-color: #007BFF;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        padding: 15px;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+    }
+
+    .card-body {
+        text-align: center;
+        padding: 20px;
+        font-size: 17px;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+    .btn{
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 17px;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+
+    .btn-primary {
+        background-color: #007BFF;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    h1{
+      text-align: center;
+      margin-top: 15px;
+      padding: 10px;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+</style>
+<h1>Logout Conformation</h1>
+<div class="container">
+    
+    <div class="card">
+        <div class="card-header">{{ _("Logout Confirmation") }}</div>
+        <div class="card-body">
+            <p>{{ _("Are you sure you want to logout?") }}</p>
+            <form method="post" class="form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">{{ _("Yes") }}</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -54,6 +54,7 @@
 
 <body>
     <h1>Select SOC Features</h1>
+    <a href="{% url "account_logout" %}">Logout</a>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

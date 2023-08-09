@@ -63,10 +63,20 @@
         input[type="submit"]:hover {
             background-color: #3074ED;
         }
+        .logout{
+        text-decoration: none;
+        /* font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
+        font-size: 16px;
+        color: #fff;
+        padding: 15px;
+        border-radius: 15px;
+        background-color: #3074ED;
+        }
     </style>
 </head>
 <body>
     <h1>Select Tools</h1>
+    <a class="logout" href="{% url "account_logout" %} ">Logout</a>
     <form method="post" onsubmit="return validateForm();">
         {% csrf_token %}
         <label for="SIEMxdr">

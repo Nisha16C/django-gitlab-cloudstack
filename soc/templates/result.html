@@ -6,52 +6,99 @@
         body {
             font-family: Arial, sans-serif;
             margin: 30px;
+            background-color: #f5f5f5;
         }
 
         h1 {
             color: #007BFF;
+            text-align: center
         }
 
         h2 {
-            color: #0062CC;
+            color:  #da2201;
         }
 
         h3 {
-            color: #004085;
+            color: #d67e4b;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .pipeline-status {
             font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background-color: #007BFF; /* Blue color */
+            transition: width 0.3s;
+            border-radius: 5px; /* Rounded corners for the progress bar */
         }
 
         .artifact-list {
             list-style: none;
             padding-left: 0;
+            margin-top: 20px;
         }
 
         .artifact-list li {
             margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         pre {
-            background-color: #f8f9fa;
             padding: 10px;
             border-radius: 5px;
             white-space: pre-wrap;
+            background-color: #e9ecef;
+        }
+
+        pre {
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            background-color: #e9ecef;
         }
 
         /* Add any additional styling here */
     </style>
 </head>
 <body>
-    <h1>Tool Installation Result</h1>
-    <p>{{ message }}</p>
+    <div class="container">
+        <h1>Tool Installation Result</h1>
+    
+        <!-- <p>{{ message }}</p> -->
 
-    <h2>Latest Pipeline Status:</h2>
-    <p id="latest-pipeline-status" class="pipeline-status">Loading...</p>
+        <h2>Installation Status</h2>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+            <div class="progress-text" id="progress-text">0%</div>
+        </div>
+        <p id="latest-pipeline-status" class="pipeline-status">Loading...</p>
 
-    <h3>Artifacts:</h3>
-    <ul id="artifact-list" class="artifact-list"></ul>
+        <h2>Instance Details</h2>
+        <ul id="artifact-list" class="artifact-list"></ul>
+    </div>
     <script>
         // Function to fetch the latest pipeline status and artifacts, and update the page
         function updateLatestPipelineStatusAndArtifacts() {
@@ -61,23 +108,43 @@
                 .then(response => response.json())
                 .then(data => {
                     const latestStatusElement = document.getElementById('latest-pipeline-status');
-                    latestStatusElement.innerText = 'Latest Pipeline Status: ' + data.status;
+                    latestStatusElement.innerText = data.status;
+                    const progressBar = document.getElementById('progress-bar');
+                    const progressText = document.getElementById('progress-text');
+                    // const percentageText = document.getElementById('percentage-text');
+                    let progressPercentage = 0; // Default progress
 
+                    if (data.status === 'created') {
+                        progressPercentage = 25;
+                    }
+                      else if (data.status === 'pending') {
+                        progressPercentage = 25;
+                        
+                    } else if (data.status === 'running') {
+                        progressPercentage = 50;
+                    } else if (data.status === 'success') {
+                        progressPercentage = 100;
+                    }
+
+                    progressBar.style.width = progressPercentage + '%';
+                    progressText.innerText = progressPercentage + '%';
+                    // percentageText.innerText = progressPercentage + '%';
                     const artifactList = document.getElementById('artifact-list');
                     artifactList.innerHTML = '';
+                    
 
                     if (data.artifacts.length > 0) {
                         data.artifacts.forEach(artifact => {
                             if (artifact.filename === 'ip.txt') {
                                 // Display the content of the ip.txt file
                                 const listItem = document.createElement('li');
-                                listItem.innerHTML = `<strong>${artifact.filename}</strong><br><pre>${artifact.content}</pre>`;
+                                listItem.innerHTML = `<pre>${artifact.content}</pre>`;
                                 artifactList.appendChild(listItem);
                             }
                         });
                     } else {
                         const listItem = document.createElement('li');
-                        listItem.innerText = 'No artifacts found.';
+                        listItem.innerText = 'IP Address';
                         artifactList.appendChild(listItem);
                     }
                 });

@@ -4,7 +4,9 @@ import zipfile
 import io
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def trigger_pipeline_view(request):
     if request.method == 'POST':
         form_data = request.POST
@@ -32,6 +34,7 @@ def trigger_pipeline_view(request):
         return render(request, 'result.html', {'message': 'Installation in Progress', 'pipeline_names': pipeline_names})
     else:
         return render(request, 'trigger_pipeline.html')
+    
 
 def trigger_branch(base_url, project_id, headers, branch_name):
     data = {"ref": branch_name}
