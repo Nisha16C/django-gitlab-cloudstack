@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Pipeline Status and Artifacts</title>
     <style>
@@ -15,7 +16,7 @@
         }
 
         h2 {
-            color:  #da2201;
+            color: #da2201;
         }
 
         h3 {
@@ -46,9 +47,10 @@
         .progress-bar {
             height: 100%;
             width: 0;
-            background-color: #007BFF; /* Blue color */
+            background-color: #007BFF;
+            /* Blue color */
             transition: width 0.3s;
-            border-radius: 5px; /* Rounded corners for the progress bar */
+            border-radius: 5px;
         }
 
         .artifact-list {
@@ -81,23 +83,69 @@
         }
 
         /* Add any additional styling here */
+        .loader {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #007BFF; /* Blue color */
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            animation: spin 2s linear infinite;
+            position: absolute;
+            top: calc(50% - 10px - 20px); /* Position at the center of the progress bar */
+            left: 50%; /* Position at the center of the progress bar */
+            transform: translate(-50%, -50%); /* Center the loader */
+            display: block;
+        }
+        .loader.green {
+            border-top-color: #28a745; /* Green color */
+            border-right-color: #28a745; /* Green color */
+            border-bottom-color: #28a745; /* Green color */
+            border-left-color: #28a745;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .success-mark {
+            position: absolute;
+            top: calc(50% - 10px); /* Position at the center of the progress bar */
+            left: 50%; /* Position at the center of the progress bar */
+            transform: translate(-50%, -50%); /* Center the success mark */
+            color: #28a745; /* Green color */
+            font-size: 70px;
+            font-weight: bold;
+            display: none;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Tool Installation Result</h1>
-    
+
         <!-- <p>{{ message }}</p> -->
 
         <h2>Installation Status</h2>
         <div class="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
+            <div class="loader"></div>
+            <div class="success-mark" id="success-mark">&#10004;</div>
+            <div class="progress-bar" id="progress-bar">
+            </div>
             <div class="progress-text" id="progress-text">0%</div>
         </div>
         <p id="latest-pipeline-status" class="pipeline-status">Loading...</p>
 
         <h2>Instance Details</h2>
         <ul id="artifact-list" class="artifact-list"></ul>
+        <p>Credentials</p>
+        <ul id="artifact-cred" class="artifact-list"></ul>
     </div>
     <script>
         // Function to fetch the latest pipeline status and artifacts, and update the page
@@ -111,17 +159,29 @@
                     latestStatusElement.innerText = data.status;
                     const progressBar = document.getElementById('progress-bar');
                     const progressText = document.getElementById('progress-text');
+                    const loader = document.querySelector('.loader');
+                    const successMark = document.getElementById('success-mark');
                     // const percentageText = document.getElementById('percentage-text');
                     let progressPercentage = 0; // Default progress
+                    if (data.status === 'success' || progressPercentage === 100) {
+                        loader.style.animation = 'none'; // Stop the loader rotation
+                        loader.classList.add('green');
+                        successMark.style.display = 'block'; // Show the success mark
+                    } else {
+                        loader.style.animation = 'spin 2s linear infinite'; // Continue the loader rotation
+                        successMark.style.display = 'none'; // Hide the success mark
+                        loader.classList.remove('green');
+                    }
 
                     if (data.status === 'created') {
-                        progressPercentage = 25;
+                        progressPercentage = 10;
                     }
-                      else if (data.status === 'pending') {
+                    else if (data.status === 'pending') {
                         progressPercentage = 25;
-                        
+
                     } else if (data.status === 'running') {
                         progressPercentage = 50;
+
                     } else if (data.status === 'success') {
                         progressPercentage = 100;
                     }
@@ -131,22 +191,48 @@
                     // percentageText.innerText = progressPercentage + '%';
                     const artifactList = document.getElementById('artifact-list');
                     artifactList.innerHTML = '';
-                    
+                    const cred_artifactList = document.getElementById('artifact-cred');
+                    cred_artifactList.innerHTML = '';
 
                     if (data.artifacts.length > 0) {
+                        let ipArtifact = null;
+                        let credentialArtifact = null;
+
                         data.artifacts.forEach(artifact => {
                             if (artifact.filename === 'ip.txt') {
-                                // Display the content of the ip.txt file
-                                const listItem = document.createElement('li');
-                                listItem.innerHTML = `<pre>${artifact.content}</pre>`;
-                                artifactList.appendChild(listItem);
+                                ipArtifact = artifact;
+                            } else if (artifact.filename === 'wazuh_credentials.txt') {
+                                credentialArtifact = artifact;
                             }
                         });
+
+                        if (ipArtifact) {
+                            // Display IP Address
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML = `<pre>IP Address: ${ipArtifact.content}</pre>`;
+                            artifactList.appendChild(listItem);
+                        }
+
+                        if (credentialArtifact) {
+                            // Display Credentials
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML = `<pre>${credentialArtifact.content}</pre>`;
+                            cred_artifactList.appendChild(listItem);
+
+                            // Display URL if IP Address is available
+                            if (ipArtifact) {
+                                const listItemLink = document.createElement('li');
+                                listItemLink.innerHTML = `Dashboard URL: <a href="https://${ipArtifact.content}/" target="_blank">https://${ipArtifact.content}/</a>`;
+                                cred_artifactList.appendChild(listItemLink);
+                            }
+                        }
                     } else {
                         const listItem = document.createElement('li');
-                        listItem.innerText = 'IP Address';
+                        listItem.innerText = 'Creating Instance';
                         artifactList.appendChild(listItem);
+                        cred_artifactList.appendChild(listItem);
                     }
+
                 });
 
             // Call the function again after 5 seconds (adjust as needed)
@@ -157,4 +243,5 @@
         updateLatestPipelineStatusAndArtifacts();
     </script>
 </body>
+
 </html>

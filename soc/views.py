@@ -85,6 +85,11 @@ def get_latest_pipeline_artifacts(base_url, project_id, headers):
                 if 'ip.txt' in zip_file.namelist():
                     ip_txt_content = zip_file.read('ip.txt').decode('utf-8')
                     artifacts.append({"filename": "ip.txt", "content": ip_txt_content})
+            # Credentials 
+            with zipfile.ZipFile(io.BytesIO(response.content), 'r') as zip_file:
+                if 'wazuh_credentials.txt' in zip_file.namelist():
+                    cred_txt_content = zip_file.read('wazuh_credentials.txt').decode('utf-8')
+                    artifacts.append({"filename": "wazuh_credentials.txt", "content": cred_txt_content})
 
     return artifacts
 
