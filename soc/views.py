@@ -6,42 +6,54 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
+class CustomBranchNotFoundError(Exception):
+    pass
+
 @login_required
 def trigger_pipeline_view(request):
     if request.method == 'POST':
-        form_data = request.POST
-        siemxdr = form_data.get('SIEMxdr')
-        monitoring = form_data.get('Monitoring')
-        logging = form_data.get('Logging')
+        try:
+            form_data = request.POST
+            siemxdr = form_data.get('SIEMxdr')
+            monitoring = form_data.get('Monitoring')
+            logging = form_data.get('Logging')
 
-        # Replace these variables with your actual GitLab project ID and private token
-        project_id = "109"
-        private_token = "Brd96ShxJsCfqZsL-3ZB"
-        base_url = "https://gitlab.os3.com/api/v4/"
-        headers = {"PRIVATE-TOKEN": private_token}
+            # Replace these variables with your actual GitLab project ID and private token
+            project_id = "109"
+            private_token = "Brd96ShxJsCfqZsL-3ZB"
+            base_url = "https://gitlab.os3.com/api/v4/"
+            headers = {"PRIVATE-TOKEN": private_token}
 
-        pipeline_names = []
-        if siemxdr:
-            pipeline_names.append("SIEMxdr")
-            trigger_branch(base_url, project_id, headers, "wazuh-s100")
-        if monitoring:
-            pipeline_names.append("Monitoring")
-            trigger_branch(base_url, project_id, headers, "test")
-        if logging:
-            pipeline_names.append("Logging")
-            trigger_branch(base_url, project_id, headers, "logging")
+            pipeline_names = []
+            if siemxdr:
+                pipeline_names.append("SIEMxdr")
+                trigger_branch(base_url, project_id, headers, "wazuh-s100")
+            if monitoring:
+                pipeline_names.append("Monitoring")
+                trigger_branch(base_url, project_id, headers, "test")
+            if logging:
+                pipeline_names.append("Logging")
+                trigger_branch(base_url, project_id, headers, "logging")
+
+        except CustomBranchNotFoundError:
+            return render(request, 'custom_error_page.html', {'error_message': "Specified branch does not exist."})
 
         return render(request, 'result.html', {'message': 'Installation in Progress', 'pipeline_names': pipeline_names})
     else:
         return render(request, 'trigger_pipeline.html')
-    
 
 def trigger_branch(base_url, project_id, headers, branch_name):
     data = {"ref": branch_name}
     response = requests.post(base_url + f"projects/{project_id}/pipeline", headers=headers, json=data, verify=False)
 
-    if response.status_code != 201:
-        raise ValueError(f"Error triggering pipeline for branch '{branch_name}': {response.status_code}, {response.json()}")
+    try:
+        response.raise_for_status()  # This will raise an exception if response status code is not 2xx
+    except requests.exceptions.HTTPError as e:
+        if response.status_code == 400 and "Reference not found" in response.json().get('message', {}).get('base', []):
+            raise CustomBranchNotFoundError("The specified branch does not exist.")
+        else:
+            raise ValueError(f"Error triggering pipeline for branch '{branch_name}': {e}")
+
 
 def get_latest_pipeline_status(base_url, project_id, headers):
     response = requests.get(base_url + f"projects/{project_id}/pipelines", headers=headers, verify=False)
