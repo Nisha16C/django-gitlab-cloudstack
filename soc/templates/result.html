@@ -16,7 +16,7 @@
         }
 
         h2 {
-            color: #da2201;
+            color: #007BFF;
         }
 
         h3 {
@@ -83,6 +83,11 @@
         }
 
         /* Add any additional styling here */
+        .center-content {
+            text-align: center;
+            margin: auto;
+        }
+
         .loader {
             border: 4px solid rgba(0, 0, 0, 0.1);
             border-top: 4px solid #007BFF; /* Blue color */
@@ -90,17 +95,25 @@
             width: 70px;
             height: 70px;
             animation: spin 2s linear infinite;
-            position: absolute;
-            top: calc(50% - 10px - 20px); /* Position at the center of the progress bar */
+            /* position: stati; */
+            top: calc(25% - 10px); /* Position at the center of the progress bar */
             left: 50%; /* Position at the center of the progress bar */
-            transform: translate(-50%, -50%); /* Center the loader */
+            /* transform: translate(-50%, -50%); Center the loader */
             display: block;
+
         }
+
         .loader.green {
             border-top-color: #28a745; /* Green color */
             border-right-color: #28a745; /* Green color */
             border-bottom-color: #28a745; /* Green color */
             border-left-color: #28a745;
+        }
+        .loader.red {
+            border-top-color: #f11f1f; /* Red color */
+            border-right-color: #f11f1f; /* Red color */
+            border-bottom-color: #f11f1f; /* Red color */
+            border-left-color: #f11f1f;
         }
 
         @keyframes spin {
@@ -114,39 +127,49 @@
         }
 
         .success-mark {
-            position: absolute;
-            top: calc(50% - 10px); /* Position at the center of the progress bar */
+            /* position: static; */
+            top: calc(25% - 10px); /* Position at the center of the progress bar */
             left: 50%; /* Position at the center of the progress bar */
-            transform: translate(-50%, -50%); /* Center the success mark */
+            transform: translate(0%, -95%); /* Center the success mark */
             color: #28a745; /* Green color */
             font-size: 70px;
             font-weight: bold;
             display: none;
+
         }
+
+        .red-mark {
+            /* position: absolute; */
+            top: calc(25% - 10px); /* Position at the center of the progress bar */
+            left: 50%; /* Position at the center of the progress bar */
+            transform: translate(0%, -95%); /* Center the success mark */
+            color: #f11f1f; /* Red color */
+            font-size: 70px;
+            font-weight: bold;
+            display: none;
+        }
+
     </style>
 </head>
 
 <body>
     <div class="container">
         <h1>Tool Installation Result</h1>
-
-        <!-- <p>{{ message }}</p> -->
-
+        <div class="center-content loader green"></div>
+        <div class="center-content success-mark" id="success-mark">&#10004;</div>
+        <div class="center-content red-mark" id="red-mark">&#10006;</div> <!-- Add red mark container -->
         <h2>Installation Status</h2>
         <div class="progress-container">
-            <div class="loader"></div>
-            <div class="success-mark" id="success-mark">&#10004;</div>
-            <div class="progress-bar" id="progress-bar">
-            </div>
+            <div class="progress-bar" id="progress-bar"></div>
             <div class="progress-text" id="progress-text">0%</div>
         </div>
         <p id="latest-pipeline-status" class="pipeline-status">Loading...</p>
-
         <h2>Instance Details</h2>
-        <ul id="artifact-list" class="artifact-list"></ul>
         <p>Credentials</p>
+        <ul id="artifact-list" class="artifact-list"></ul>
         <ul id="artifact-cred" class="artifact-list"></ul>
     </div>
+
     <script>
         // Function to fetch the latest pipeline status and artifacts, and update the page
         function updateLatestPipelineStatusAndArtifacts() {
@@ -161,16 +184,27 @@
                     const progressText = document.getElementById('progress-text');
                     const loader = document.querySelector('.loader');
                     const successMark = document.getElementById('success-mark');
+                    const redMark = document.getElementById('red-mark');
                     // const percentageText = document.getElementById('percentage-text');
                     let progressPercentage = 0; // Default progress
                     if (data.status === 'success' || progressPercentage === 100) {
                         loader.style.animation = 'none'; // Stop the loader rotation
                         loader.classList.add('green');
                         successMark.style.display = 'block'; // Show the success mark
+                        progressBar.style.backgroundColor = '#28a745';
+                    } else if (data.status === 'failed') {
+                        loader.style.animation = 'none'; // Stop the loader rotation
+                        // progressBar.style.width = '100%';
+                        progressBar.style.backgroundColor = '#f11f1f';
+                        loader.classList.add('red');
+                        redMark.style.display = 'block';
+                        
+                    
                     } else {
                         loader.style.animation = 'spin 2s linear infinite'; // Continue the loader rotation
                         successMark.style.display = 'none'; // Hide the success mark
                         loader.classList.remove('green');
+                        redMark.style.display = 'none';
                     }
 
                     if (data.status === 'created') {
@@ -182,7 +216,7 @@
                     } else if (data.status === 'running') {
                         progressPercentage = 50;
 
-                    } else if (data.status === 'success') {
+                    } else if (data.status === 'success' || data.status === 'failed') {
                         progressPercentage = 100;
                     }
 
@@ -228,7 +262,11 @@
                         }
                     } else {
                         const listItem = document.createElement('li');
-                        listItem.innerText = 'Creating Instance';
+                        if (data.status === 'failed') {
+                            listItem.innerText = 'Failed To Creating Instance';
+                        } else {
+                            listItem.innerText = 'Creating Instance';
+                        }
                         artifactList.appendChild(listItem);
                         cred_artifactList.appendChild(listItem);
                     }
