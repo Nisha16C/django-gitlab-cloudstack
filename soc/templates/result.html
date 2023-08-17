@@ -171,8 +171,12 @@
     </div>
 
     <script>
+        let stopFetching = false;
         // Function to fetch the latest pipeline status and artifacts, and update the page
         function updateLatestPipelineStatusAndArtifacts() {
+            if (stopFetching) {
+                return; // Stop fetching if stopFetching is true
+            }
             const url = '/get_pipeline_status/';
 
             fetch(url, { method: 'GET' })
@@ -185,6 +189,9 @@
                     const loader = document.querySelector('.loader');
                     const successMark = document.getElementById('success-mark');
                     const redMark = document.getElementById('red-mark');
+                    if (data.status === 'success'|| data.status === 'failed') {
+                        stopFetching = true; // Set stopFetching to true if status is success
+                    }
                     // const percentageText = document.getElementById('percentage-text');
                     let progressPercentage = 0; // Default progress
                     if (data.status === 'success' || progressPercentage === 100) {
