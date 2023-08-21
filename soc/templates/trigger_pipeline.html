@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<html>
+
 <head>
     <title>Select Tools</title>
     <script>
@@ -17,23 +19,94 @@
             return true;
         }
     </script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
         }
 
         h1 {
+            text-align: center;
+            padding: 20px;
             color: #4285F4;
+            background-color: #ffffff;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+            margin-left: 10px;
+            margin-right: 10px;
+            border-radius: 15px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .left-panel {
+            margin-left: 10px;
+            width: 20%;
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.2);
+            min-height: 80vh; /* Added */
+            max-height: 80vh; /* Added */
+            overflow-y: auto; /* Added for scrolling */
+            position: relative; /* Added for positioning */
+            display: flex;
+            flex-direction: column; /* Adjusted to column layout */
+        }
+
+        .right-panel {
+            width: 70%;
+            background-color: #ffffff;
+            padding: 20px;
+            margin-left: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            margin-right: 10px;
+            min-height: 80vh; /* Added */
+            display: flex;
+            flex-direction: column; /* Center elements vertically */
+        }
+
+        .tool-link {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            border-radius: 10px;
+            margin-bottom: 10px;
             text-align: center;
         }
 
-        form {
-            width: 400px;
-            margin: 0 auto;
-            border: 1px solid #ccc;
-            padding: 20px;
+        .tool-link:hover {
+            background-color: #cbcbcb;
+        }
+        .op {
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+            background-color: #4285F4;
+            color: #fff;
             border-radius: 10px;
+            box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+        }
+
+
+        .logout {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-decoration: none;
+            color: #fff;
+            padding: 10px 20px;
+            background-color: #4285F4;
+            font-size: 17px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
         }
 
         label {
@@ -46,58 +119,114 @@
         input[type="checkbox"] {
             margin-right: 10px;
             vertical-align: middle;
+            height: 18px;
+            width: 18px;
+        }
+
+        .logout:hover {
+            background-color: #3074ED;
+        }
+
+        .install-button-container {
+            margin-top: auto; /* Pushes the install button to the bottom */
+            width: 100%;
         }
 
         input[type="submit"] {
-            display: block;
-            margin-top: 20px;
             padding: 10px 20px;
             background-color: #4285F4;
             color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 17px;
             width: 100%;
         }
 
         input[type="submit"]:hover {
             background-color: #3074ED;
         }
-        
-        .logout {
-            float: right;
-            margin-top: -40px;
-            margin-right: 20px;
-            text-decoration: none;
-            font-size: 16px;
-            color: #fff;
-            padding: 15px;
-            border-radius: 15px;
-            background-color: #3074ED;
+
+        .txt1 {
+            font-size: 75px;
+            color: #bbbaba;
+            margin-top: 75px;
+            font-weight: bold;
+            padding: 5px;
+            margin-top: 20%;
+        }
+
+        .txt2 {
+            font-size: 30px;
+            color: #575757;
+            margin-top: 10px;
+            font-weight: bold;
+            padding: 5px;
         }
     </style>
 </head>
+
 <body>
-    <h1>Select Tools</h1>
+    <h1>Security Operations Center</h1>
     <a class="logout" href="{% url "account_logout" %}">Logout</a>
     <form method="post" onsubmit="return validateForm();">
         {% csrf_token %}
-        <label for="SIEMxdr">
-            <input type="checkbox" name="SIEMxdr" id="SIEMxdr" value="SIEMxdr">
-            SIEMxdr
-        </label>
-        <br>
-        <label for="Monitoring">
-            <input type="checkbox" name="Monitoring" id="Monitoring" value="Monitoring">
-            Monitoring
-        </label>
-        <br>
-        <label for="Logging">
-            <input type="checkbox" name="Logging" id="Logging" value="Logging">
-            Logging
-        </label>
-        <br>
-        <input type="submit" value="Install">
+        <div class="container">
+            <div class="left-panel">
+                <div class="op">Select Options</div>
+                <div class="tool-link" onclick="showToolSettings('SIEMxdr'); showSubmitButton();">SIEMxdr</div>
+                <div class="tool-link" onclick="showToolSettings('Monitoring'); showSubmitButton();">Monitoring</div>
+                <div class="tool-link" onclick="showToolSettings('Logging'); showSubmitButton();">Logging</div>
+                <div class="install-button-container">
+                    <input type="submit" id="submit-button" name="submit" value="Install" />
+                </div>
+            </div>
+            <div class="right-panel" id="right-panel">
+                <div>
+                    <div class="txt1">Welcome To SOC Platform</div>
+                    <div class="txt2">Guarding with Open Source: Your Digital Safehouse</div>
+                </div>
+            </div>
+        </div>
     </form>
+    <script>
+        function showToolSettings(toolName) {
+            var rightPanel = document.getElementById('right-panel');
+            rightPanel.innerHTML = '';
+
+            if (toolName === 'SIEMxdr') {
+                var settings = '<h2>SIEMxdr Settings</h2>' +
+                    '<label for="SIEMxdr">' +
+                    '<input type="checkbox" name="SIEMxdr" id="SIEMxdr" value="SIEMxdr"> Wazuh' +
+                    '</label>' +
+                    '<br>' +
+                    '<label for="SIEMxdrOption2">' +
+                    '<input type="checkbox" name="SIEMxdrOption2" id="SIEMxdrOption2"> Splunk' +
+                    '</label>';
+                rightPanel.innerHTML = settings;
+            } else if (toolName === 'Monitoring') {
+                var settings = '<h2>Monitoring Settings</h2>' +
+                    '<label for="MonitoringOption1">' +
+                    '<input type="checkbox" name="MonitoringOption1" id="MonitoringOption1"> Grafana' +
+                    '</label>' +
+                    '<br>' +
+                    '<label for="MonitoringOption2">' +
+                    '<input type="checkbox" name="MonitoringOption2" id="MonitoringOption2"> ELK' +
+                    '</label>';
+                rightPanel.innerHTML = settings;
+            } else if (toolName === 'Logging') {
+                var settings = '<h2>Logging Settings</h2>' +
+                    '<label for="LoggingOption1">' +
+                    '<input type="checkbox" name="LoggingOption1" id="LoggingOption1"> ELK Stack' +
+                    '</label>' +
+                    '<br>' +
+                    '<label for="LoggingOption2">' +
+                    '<input type="checkbox" name="LoggingOption2" id="LoggingOption2"> Prometheus' +
+                    '</label>';
+                rightPanel.innerHTML = settings;
+            }
+        }
+    </script>
 </body>
+
 </html>
