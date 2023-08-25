@@ -14,9 +14,35 @@ def trigger_pipeline_view(request):
     if request.method == 'POST':
         try:
             form_data = request.POST
-            siemxdr = form_data.get('SIEMxdr')
-            monitoring = form_data.get('Monitoring')
-            logging = form_data.get('Logging')
+
+            # Dictionary mapping tool names to their corresponding branch names
+            tool_branch_mapping = {
+                "SIEMxdr": "wazuh",
+                "Filebeat": "filebeat",
+                "Graylog": "graylog",
+                "Splunk": "splunk",
+                "WazuhIndexer": "wazuhindexer",
+                "Elasticsearch": "elasticsearch",
+                "Grafana": "grafana",
+                "Kibana": "kibana",
+                "OpenCTI": "opencti",
+                "MISP": "misp",
+                "TheHIVE": "thehive",
+                "RTIR": "rtir",
+                "Shuffle": "shuffle",
+                "Cortex": "cortex",
+                "Velociraptor": "velociraptor",
+                "OSINT": "osint",
+                "InfluxDB": "influxdb",
+                "Prometheus": "prometheus"
+            }
+
+            selected_tools = []
+
+            # Identify which tools the user has selected
+            for tool, branch_name in tool_branch_mapping.items():
+                if form_data.get(tool):
+                    selected_tools.append(branch_name)
 
             # Replace these variables with your actual GitLab project ID and private token
             project_id = "109"
@@ -25,15 +51,15 @@ def trigger_pipeline_view(request):
             headers = {"PRIVATE-TOKEN": private_token}
 
             pipeline_names = []
-            if siemxdr:
-                pipeline_names.append("SIEMxdr")
+
+            #Trigger Infra first as a default 
+            if selected_tools:
+                pipeline_names.append("wazuh-s100")
                 trigger_branch(base_url, project_id, headers, "wazuh-s100")
-            if monitoring:
-                pipeline_names.append("Monitoring")
-                trigger_branch(base_url, project_id, headers, "test")
-            if logging:
-                pipeline_names.append("Logging")
-                trigger_branch(base_url, project_id, headers, "logging")
+            # Trigger selected branches
+            for branch_name in selected_tools:
+                pipeline_names.append(branch_name)
+                trigger_branch(base_url, project_id, headers, branch_name)
 
         except CustomBranchNotFoundError:
             return render(request, 'custom_error_page.html', {'error_message': "Specified branch does not exist."})
@@ -41,6 +67,7 @@ def trigger_pipeline_view(request):
         return render(request, 'result.html', {'message': 'Installation in Progress', 'pipeline_names': pipeline_names})
     else:
         return render(request, 'trigger_pipeline.html')
+
 
 def trigger_branch(base_url, project_id, headers, branch_name):
     data = {"ref": branch_name}
