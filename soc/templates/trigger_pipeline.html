@@ -3,6 +3,7 @@
 
 <head>
     <title>Select Tools</title>
+    <!-- <link rel="stylesheet" href="tools.css"> -->
     <script>
         function validateForm() {
             var checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -19,7 +20,6 @@
             return true;
         }
     </script>
-
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,12 +51,17 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.2);
-            min-height: 80vh; /* Added */
-            max-height: 80vh; /* Added */
-            overflow-y: auto; /* Added for scrolling */
-            position: relative; /* Added for positioning */
+            min-height: 80vh;
+            /* Added */
+            max-height: 80vh;
+            /* Added */
+            overflow-y: auto;
+            /* Added for scrolling */
+            position: relative;
+            /* Added for positioning */
             display: flex;
-            flex-direction: column; /* Adjusted to column layout */
+            flex-direction: column;
+            /* Adjusted to column layout */
         }
 
         .right-panel {
@@ -67,9 +72,11 @@
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
             margin-right: 10px;
-            min-height: 80vh; /* Added */
+            min-height: 80vh;
+            /* Added */
             display: flex;
-            flex-direction: column; /* Center elements vertically */
+            flex-direction: column;
+            /* Center elements vertically */
         }
 
         .tool-link {
@@ -80,11 +87,13 @@
             border-radius: 10px;
             margin-bottom: 10px;
             text-align: center;
+            box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
         }
 
         .tool-link:hover {
             background-color: #cbcbcb;
         }
+
         .op {
             padding: 10px;
             margin-bottom: 10px;
@@ -107,6 +116,7 @@
             font-size: 17px;
             box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
+            border: 1px solid #ccc;
         }
 
         label {
@@ -128,7 +138,8 @@
         }
 
         .install-button-container {
-            margin-top: auto; /* Pushes the install button to the bottom */
+            margin-top: auto;
+            /* Pushes the install button to the bottom */
             width: 100%;
         }
 
@@ -141,6 +152,7 @@
             cursor: pointer;
             font-size: 17px;
             width: 100%;
+            box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
         }
 
         input[type="submit"]:hover {
@@ -174,11 +186,26 @@
         <div class="container">
             <div class="left-panel">
                 <div class="op">Select Options</div>
-                <div class="tool-link" onclick="showToolSettings('SIEMxdr'); showSubmitButton();">SIEMxdr</div>
-                <div class="tool-link" onclick="showToolSettings('Monitoring'); showSubmitButton();">Monitoring</div>
-                <div class="tool-link" onclick="showToolSettings('Logging'); showSubmitButton();">Logging</div>
+                <div class="tool-link" onclick="showToolSettings('Log_Ingestion'); showSubmitButton();">Log Ingestion
+                </div>
+                <div class="tool-link" onclick="showToolSettings('Log_Analysis'); showSubmitButton();">Log Analysis
+                </div>
+                <div class="tool-link" onclick="showToolSettings('Backend_Storage'); showSubmitButton();">Backend
+                    Storage</div>
+                <div class="tool-link" onclick="showToolSettings('Visulization'); showSubmitButton();">Visualization
+                </div>
+                <div class="tool-link" onclick="showToolSettings('Intelligence_Enrichment'); showSubmitButton();">
+                    Intelligence Enrichment</div>
+                <div class="tool-link" onclick="showToolSettings('Case_Management'); showSubmitButton();">Case
+                    Management</div>
+                <div class="tool-link" onclick="showToolSettings('Automate_Automate'); showSubmitButton();">Automate
+                    Automate</div>
+                <div class="tool-link" onclick="showToolSettings('Investigation'); showSubmitButton();">Investigation
+                </div>
+                <div class="tool-link" onclick="showToolSettings('Health_Monitoring'); showSubmitButton();">Health
+                    Monitoring</div>
                 <div class="install-button-container">
-                    <input type="submit" id="submit-button" name="submit" value="Install" />
+                    <input type="submit" id="submit-button" name="submit" value="Install" style="display: none;" />
                 </div>
             </div>
             <div class="right-panel" id="right-panel">
@@ -186,46 +213,143 @@
                     <div class="txt1">Welcome To SOC Platform</div>
                     <div class="txt2">Guarding with Open Source: Your Digital Safehouse</div>
                 </div>
+                <div id="checkbox-container"></div> <!-- Container for checkboxes -->
             </div>
         </div>
     </form>
     <script>
+        // Store checkbox states in local storage
+        function storeCheckboxStates(toolName) {
+            var checkboxes = document.querySelectorAll('#right-panel input[type="checkbox"]');
+            checkboxes.forEach(function (checkbox) {
+                localStorage.setItem(toolName + '_' + checkbox.id, checkbox.checked);
+            });
+        }
+
+        // Load and update checkbox states from local storage
+        function loadCheckboxStates(toolName) {
+            var checkboxes = document.querySelectorAll('#right-panel input[type="checkbox"]');
+            checkboxes.forEach(function (checkbox) {
+                var checkboxState = localStorage.getItem(toolName + '_' + checkbox.id);
+                if (checkboxState === 'true') {
+                    checkbox.checked = true;
+                } else {
+                    checkbox.checked = false;
+                }
+
+                checkbox.addEventListener('change', function () {
+                    localStorage.setItem(toolName + '_' + checkbox.id, checkbox.checked);
+                });
+            });
+        }
+
         function showToolSettings(toolName) {
             var rightPanel = document.getElementById('right-panel');
             rightPanel.innerHTML = '';
 
-            if (toolName === 'SIEMxdr') {
-                var settings = '<h2>SIEMxdr Settings</h2>' +
+            if (toolName === 'Log_Ingestion') {
+                var settings = '<h2>Log Ingestion Settings</h2>' +
                     '<label for="SIEMxdr">' +
                     '<input type="checkbox" name="SIEMxdr" id="SIEMxdr" value="SIEMxdr"> Wazuh' +
                     '</label>' +
                     '<br>' +
-                    '<label for="SIEMxdrOption2">' +
-                    '<input type="checkbox" name="SIEMxdrOption2" id="SIEMxdrOption2"> Splunk' +
+                    '<label for="Filebeat">' +
+                    '<input type="checkbox" name="Filebeat" id="Filebeat" value="Filebeat"> Filebeat' +
                     '</label>';
                 rightPanel.innerHTML = settings;
-            } else if (toolName === 'Monitoring') {
-                var settings = '<h2>Monitoring Settings</h2>' +
-                    '<label for="MonitoringOption1">' +
-                    '<input type="checkbox" name="MonitoringOption1" id="MonitoringOption1"> Grafana' +
+            } else if (toolName === 'Log_Analysis') {
+                var settings = '<h2>Log Analysis Settings</h2>' +
+                    '<label for="Graylog">' +
+                    '<input type="checkbox" name="Graylog" id="Graylog" value="Graylog"> Graylog' +
                     '</label>' +
                     '<br>' +
-                    '<label for="MonitoringOption2">' +
-                    '<input type="checkbox" name="MonitoringOption2" id="MonitoringOption2"> ELK' +
+                    '<label for="Splunk">' +
+                    '<input type="checkbox" name="Splunk" id="Splunk" value+"Splunk"> Splunk HEC' +
                     '</label>';
                 rightPanel.innerHTML = settings;
-            } else if (toolName === 'Logging') {
-                var settings = '<h2>Logging Settings</h2>' +
-                    '<label for="LoggingOption1">' +
-                    '<input type="checkbox" name="LoggingOption1" id="LoggingOption1"> ELK Stack' +
+            } else if (toolName === 'Backend_Storage') {
+                var settings = '<h2>Backend Storage Settings</h2>' +
+                    '<label for="WazuhIndexer">' +
+                    '<input type="checkbox" name="WazuhIndexer" id="WazuhIndexer" value="WazuhIndexer"> Wazuh Indexer' +
                     '</label>' +
                     '<br>' +
-                    '<label for="LoggingOption2">' +
-                    '<input type="checkbox" name="LoggingOption2" id="LoggingOption2"> Prometheus' +
+                    '<label for="Elasticsearch">' +
+                    '<input type="checkbox" name="Elasticsearch" id="Elasticsearch" value="Elasticsearch"> Elasticsearch' +
+                    '</label>';
+                rightPanel.innerHTML = settings;
+            } else if (toolName === 'Visulization') {
+                var settings = '<h2>Visulization Settings</h2>' +
+                    '<label for="Grafana">' +
+                    '<input type="checkbox" name="Grafana" id="Grafana" value="Grafana"> Grafana' +
+                    '</label>' +
+                    '<br>' +
+                    '<label for="Kibana">' +
+                    '<input type="checkbox" name="Kibana" id="Kibana" value="Kibana"> Kibana' +
+                    '</label>';
+                rightPanel.innerHTML = settings;
+            } else if (toolName === 'Intelligence_Enrichment') {
+                var settings = '<h2>Intelligence Enrichment Settings</h2>' +
+                    '<label for="OpenCTI">' +
+                    '<input type="checkbox" name="OpenCTI" id="OpenCTI" value="OpenCTI"> OpenCTI' +
+                    '</label>' +
+                    '<br>' +
+                    '<label for="MISP">' +
+                    '<input type="checkbox" name="MISP" id="MISP" value="MISP"> MISP (Malware Information Sharing Platform)' +
+                    '</label>';
+                rightPanel.innerHTML = settings;
+            } else if (toolName === 'Case_Management') {
+                var settings = '<h2>Case Management Settings</h2>' +
+                    '<label for="TheHIVE">' +
+                    '<input type="checkbox" name="TheHIVE" id="TheHIVE" value="TheHIVE"> TheHIVE' +
+                    '</label>' +
+                    '<br>' +
+                    '<label for="RTIR">' +
+                    '<input type="checkbox" name="RTIR" id="RTIR" value="RTIR"> RTIR (Request Tracker for Incident Response)' +
+                    '</label>';
+                rightPanel.innerHTML = settings;
+            } else if (toolName === 'Automate_Automate') {
+                var settings = '<h2>Automate Automate Settings</h2>' +
+                    '<label for="Shuffle">' +
+                    '<input type="checkbox" name="Shuffle" id="Shuffle" value="Shuffle"> Shuffle' +
+                    '</label>' +
+                    '<br>' +
+                    '<label for="Cortex">' +
+                    '<input type="checkbox" name="Cortex" id="Cortex" value="Cortex"> Cortex' +
+                    '</label>';
+                rightPanel.innerHTML = settings;
+            } else if (toolName === 'Investigation') {
+                var settings = '<h2>Investigation Settings</h2>' +
+                    '<label for="Velociraptor">' +
+                    '<input type="checkbox" name="Velociraptor" id="Velociraptor" value="Velociraptor"> Velociraptor' +
+                    '</label>' +
+                    '<br>' +
+                    '<label for="OSINT">' +
+                    '<input type="checkbox" name="OSINT" id="OSINT" value="OSINT"> OSINT Framework' +
+                    '</label>';
+                rightPanel.innerHTML = settings;
+            } else if (toolName === 'Health_Monitoring') {
+                var settings = '<h2>Health Monitoring Settings</h2>' +
+                    '<label for="InfluxDB">' +
+                    '<input type="checkbox" name="InfluxDB" id="InfluxDB" value="InfluxDB"> InfluxDB' +
+                    '</label>' +
+                    '<br>' +
+                    '<label for="Prometheus">' +
+                    '<input type="checkbox" name="Prometheus" id="Prometheus" value="Prometheus"> Prometheus' +
                     '</label>';
                 rightPanel.innerHTML = settings;
             }
+
+            loadCheckboxStates(toolName);
         }
+
+        // Function to show submit button when a tool is selected
+        function showSubmitButton() {
+            var submitButton = document.getElementById('submit-button');
+            submitButton.style.display = 'block';
+        }
+        window.addEventListener('beforeunload', function () {
+            localStorage.clear();
+        });
     </script>
 </body>
 
