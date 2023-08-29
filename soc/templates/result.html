@@ -90,29 +90,39 @@
 
         .loader {
             border: 4px solid rgba(0, 0, 0, 0.1);
-            border-top: 4px solid #007BFF; /* Blue color */
+            border-top: 4px solid #007BFF;
+            /* Blue color */
             border-radius: 50%;
             width: 70px;
             height: 70px;
             animation: spin 2s linear infinite;
             /* position: stati; */
-            top: calc(25% - 10px); /* Position at the center of the progress bar */
-            left: 50%; /* Position at the center of the progress bar */
+            top: calc(25% - 10px);
+            /* Position at the center of the progress bar */
+            left: 50%;
+            /* Position at the center of the progress bar */
             /* transform: translate(-50%, -50%); Center the loader */
             display: block;
 
         }
 
         .loader.green {
-            border-top-color: #28a745; /* Green color */
-            border-right-color: #28a745; /* Green color */
-            border-bottom-color: #28a745; /* Green color */
+            border-top-color: #28a745;
+            /* Green color */
+            border-right-color: #28a745;
+            /* Green color */
+            border-bottom-color: #28a745;
+            /* Green color */
             border-left-color: #28a745;
         }
+
         .loader.red {
-            border-top-color: #f11f1f; /* Red color */
-            border-right-color: #f11f1f; /* Red color */
-            border-bottom-color: #f11f1f; /* Red color */
+            border-top-color: #f11f1f;
+            /* Red color */
+            border-right-color: #f11f1f;
+            /* Red color */
+            border-bottom-color: #f11f1f;
+            /* Red color */
             border-left-color: #f11f1f;
         }
 
@@ -128,10 +138,14 @@
 
         .success-mark {
             /* position: static; */
-            top: calc(25% - 10px); /* Position at the center of the progress bar */
-            left: 50%; /* Position at the center of the progress bar */
-            transform: translate(0%, -95%); /* Center the success mark */
-            color: #28a745; /* Green color */
+            top: calc(25% - 10px);
+            /* Position at the center of the progress bar */
+            left: 50%;
+            /* Position at the center of the progress bar */
+            transform: translate(0%, -95%);
+            /* Center the success mark */
+            color: #28a745;
+            /* Green color */
             font-size: 70px;
             font-weight: bold;
             display: none;
@@ -140,15 +154,18 @@
 
         .red-mark {
             /* position: absolute; */
-            top: calc(25% - 10px); /* Position at the center of the progress bar */
-            left: 50%; /* Position at the center of the progress bar */
-            transform: translate(0%, -95%); /* Center the success mark */
-            color: #f11f1f; /* Red color */
+            top: calc(25% - 10px);
+            /* Position at the center of the progress bar */
+            left: 50%;
+            /* Position at the center of the progress bar */
+            transform: translate(0%, -95%);
+            /* Center the success mark */
+            color: #f11f1f;
+            /* Red color */
             font-size: 70px;
             font-weight: bold;
             display: none;
         }
-
     </style>
 </head>
 
@@ -183,13 +200,29 @@
                 .then(response => response.json())
                 .then(data => {
                     const latestStatusElement = document.getElementById('latest-pipeline-status');
-                    latestStatusElement.innerText = data.status;
+                    latestStatusElement.innerHTML = '';
+                    data.pipelines.forEach(pipeline => {
+                        const pipelineStatusElement = document.createElement('div');
+                        pipelineStatusElement.innerText = `Pipeline Status: ${pipeline.status}`;
+                        latestStatusElement.appendChild(pipelineStatusElement);
+
+                        const artifactsListElement = document.createElement('ul');
+                        artifactsListElement.className = 'artifact-list';
+
+                        pipeline.artifacts.forEach(artifact => {
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML = `<pre>${artifact.filename}: ${artifact.content}</pre>`;
+                            artifactsListElement.appendChild(listItem);
+                        });
+
+                        latestStatusElement.appendChild(artifactsListElement);
+                    });
                     const progressBar = document.getElementById('progress-bar');
                     const progressText = document.getElementById('progress-text');
                     const loader = document.querySelector('.loader');
                     const successMark = document.getElementById('success-mark');
                     const redMark = document.getElementById('red-mark');
-                    if (data.status === 'success'|| data.status === 'failed') {
+                    if (data.status === 'success' || data.status === 'failed') {
                         stopFetching = true; // Set stopFetching to true if status is success
                     }
                     // const percentageText = document.getElementById('percentage-text');
@@ -205,8 +238,8 @@
                         progressBar.style.backgroundColor = '#f11f1f';
                         loader.classList.add('red');
                         redMark.style.display = 'block';
-                        
-                    
+
+
                     } else {
                         loader.style.animation = 'spin 2s linear infinite'; // Continue the loader rotation
                         successMark.style.display = 'none'; // Hide the success mark
