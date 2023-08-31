@@ -103,7 +103,7 @@
             /* border-radius: 10px; */
             /* box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3); */
             position: relative; /* Position relative to allow for pseudo-element */
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             text-shadow: 2px 2px 2px rgba(109, 109, 109, 0.3);
         }
@@ -271,6 +271,10 @@
                     '<br>' +
                     '<label for="Filebeat">' +
                     '<input type="checkbox" name="Filebeat" id="Filebeat" value="Filebeat"> Filebeat' +
+                    '</label>'+
+                    '<br>' +
+                    '<label for="Wazuh_EFK">' +
+                    '<input type="checkbox" name="Wazuh_EFK" id="Wazuh_EFK" value="Wazuh_EFK"> Wazuh + EFK' +
                     '</label>';
                 rightPanel.innerHTML = settings;
             } else if (toolName === 'Log_Analysis') {

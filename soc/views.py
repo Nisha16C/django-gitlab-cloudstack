@@ -19,6 +19,7 @@ def trigger_pipeline_view(request):
             tool_branch_mapping = {
                 "SIEMxdr": "wazuh",
                 "Filebeat": "filebeat",
+                "Wazuh_EFK": "efk",
                 "Graylog": "graylog",
                 "Splunk": "splunk",
                 "WazuhIndexer": "wazuhindexer",
@@ -82,7 +83,7 @@ def trigger_branch(base_url, project_id, headers, branch_name):
             raise ValueError(f"Error triggering pipeline for branch '{branch_name}': {e}")
 
 
-def get_latest_pipeline_statuses(base_url, project_id, headers, count=3):
+def get_latest_pipeline_statuses(base_url, project_id, headers, count=2):
     response = requests.get(base_url + f"projects/{project_id}/pipelines", headers=headers, verify=False)
 
     if response.status_code != 200:
@@ -115,7 +116,7 @@ def get_latest_pipeline_artifacts(base_url, project_id, headers, pipeline_id):
         if response.status_code == 200:
             with zipfile.ZipFile(io.BytesIO(response.content), 'r') as zip_file:
                 # Modify the following to fetch the required artifacts
-                required_artifacts = ['ip.txt', 'wazuh_credentials.txt']
+                required_artifacts = ['ip.txt', 'elastic_creds.txt']
                 for artifact_name in required_artifacts:
                     if artifact_name in zip_file.namelist():
                         content = zip_file.read(artifact_name).decode('utf-8')
@@ -129,7 +130,7 @@ def get_latest_pipeline_statuses_and_artifacts(request):
     private_token = "Brd96ShxJsCfqZsL-3ZB"
     base_url = "https://gitlab.os3.com/api/v4/"
     headers = {"PRIVATE-TOKEN": private_token}
-    pipeline_count = 3
+    pipeline_count = 2
 
     # Get the statuses of the latest pipelines
     latest_pipeline_statuses = get_latest_pipeline_statuses(base_url, project_id, headers, pipeline_count)
