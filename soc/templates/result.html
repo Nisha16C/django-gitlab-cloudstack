@@ -75,13 +75,6 @@
             background-color: #e9ecef;
         }
 
-        pre {
-            padding: 10px;
-            border-radius: 5px;
-            white-space: pre-wrap;
-            background-color: #e9ecef;
-        }
-
         /* Add any additional styling here */
         .center-content {
             text-align: center;
@@ -96,14 +89,9 @@
             width: 70px;
             height: 70px;
             animation: spin 2s linear infinite;
-            /* position: stati; */
             top: calc(25% - 10px);
-            /* Position at the center of the progress bar */
             left: 50%;
-            /* Position at the center of the progress bar */
-            /* transform: translate(-50%, -50%); Center the loader */
             display: block;
-
         }
 
         .loader.green {
@@ -137,31 +125,20 @@
         }
 
         .success-mark {
-            /* position: static; */
             top: calc(25% - 10px);
-            /* Position at the center of the progress bar */
             left: 50%;
-            /* Position at the center of the progress bar */
             transform: translate(0%, -95%);
-            /* Center the success mark */
             color: #28a745;
-            /* Green color */
             font-size: 70px;
             font-weight: bold;
             display: none;
-
         }
 
         .red-mark {
-            /* position: absolute; */
             top: calc(25% - 10px);
-            /* Position at the center of the progress bar */
             left: 50%;
-            /* Position at the center of the progress bar */
             transform: translate(0%, -95%);
-            /* Center the success mark */
             color: #f11f1f;
-            /* Red color */
             font-size: 70px;
             font-weight: bold;
             display: none;
@@ -174,7 +151,7 @@
         <h1>Tool Installation Result</h1>
         <div class="center-content loader green"></div>
         <div class="center-content success-mark" id="success-mark">&#10004;</div>
-        <div class="center-content red-mark" id="red-mark">&#10006;</div> <!-- Add red mark container -->
+        <div class="center-content red-mark" id="red-mark">&#10006;</div>
         <h2>Installation Status</h2>
         <div class="progress-container">
             <div class="progress-bar" id="progress-bar"></div>
@@ -189,10 +166,10 @@
 
     <script>
         let stopFetching = false;
-        // Function to fetch the latest pipeline status and artifacts, and update the page
+
         function updateLatestPipelineStatusAndArtifacts() {
             if (stopFetching) {
-                return; // Stop fetching if stopFetching is true
+                return;
             }
             const url = '/get_pipeline_status/';
 
@@ -211,7 +188,16 @@
 
                         pipeline.artifacts.forEach(artifact => {
                             const listItem = document.createElement('li');
-                            listItem.innerHTML = `<pre>${artifact.filename}: ${artifact.content}</pre>`;
+                            if (artifact.filename === 'ip.txt') {
+                                ip = artifact.content;
+                                listItem.innerHTML = `<pre>Instance IP: ${ip}</pre>`;
+                            } else if (artifact.filename === 'elastic_creds.txt') {
+                                user = 'elastic'; // Set the user
+                                password = artifact.content;
+
+                                // Display User, Password, and Dashboard URL
+                                listItem.innerHTML = `<pre>User: ${user}</pre><pre>Password: ${password}</pre><pre>Dashboard URL: <a href="https://${ip}/" target="_blank">https://${ip}/</a></pre>`;
+                            }
                             artifactsListElement.appendChild(listItem);
                         });
 
@@ -223,101 +209,44 @@
                     const successMark = document.getElementById('success-mark');
                     const redMark = document.getElementById('red-mark');
                     if (data.status === 'success' || data.status === 'failed') {
-                        stopFetching = true; // Set stopFetching to true if status is success
+                        stopFetching = true;
                     }
-                    // const percentageText = document.getElementById('percentage-text');
-                    let progressPercentage = 0; // Default progress
+
+                    let progressPercentage = 0;
                     if (data.status === 'success' || progressPercentage === 100) {
-                        loader.style.animation = 'none'; // Stop the loader rotation
+                        loader.style.animation = 'none';
                         loader.classList.add('green');
-                        successMark.style.display = 'block'; // Show the success mark
+                        successMark.style.display = 'block';
                         progressBar.style.backgroundColor = '#28a745';
                     } else if (data.status === 'failed') {
-                        loader.style.animation = 'none'; // Stop the loader rotation
-                        // progressBar.style.width = '100%';
+                        loader.style.animation = 'none';
                         progressBar.style.backgroundColor = '#f11f1f';
                         loader.classList.add('red');
                         redMark.style.display = 'block';
-
-
                     } else {
-                        loader.style.animation = 'spin 2s linear infinite'; // Continue the loader rotation
-                        successMark.style.display = 'none'; // Hide the success mark
+                        loader.style.animation = 'spin 2s linear infinite';
+                        successMark.style.display = 'none';
                         loader.classList.remove('green');
                         redMark.style.display = 'none';
                     }
 
                     if (data.status === 'created') {
                         progressPercentage = 10;
-                    }
-                    else if (data.status === 'pending') {
+                    } else if (data.status === 'pending') {
                         progressPercentage = 25;
-
                     } else if (data.status === 'running') {
                         progressPercentage = 50;
-
                     } else if (data.status === 'success' || data.status === 'failed') {
                         progressPercentage = 100;
                     }
 
                     progressBar.style.width = progressPercentage + '%';
                     progressText.innerText = progressPercentage + '%';
-                    // percentageText.innerText = progressPercentage + '%';
-                    const artifactList = document.getElementById('artifact-list');
-                    artifactList.innerHTML = '';
-                    const cred_artifactList = document.getElementById('artifact-cred');
-                    cred_artifactList.innerHTML = '';
-
-                    if (data.artifacts.length > 0) {
-                        let ipArtifact = null;
-                        let credentialArtifact = null;
-
-                        data.artifacts.forEach(artifact => {
-                            if (artifact.filename === 'ip.txt') {
-                                ipArtifact = artifact;
-                            } else if (artifact.filename === 'wazuh_credentials.txt') {
-                                credentialArtifact = artifact;
-                            }
-                        });
-
-                        if (ipArtifact) {
-                            // Display IP Address
-                            const listItem = document.createElement('li');
-                            listItem.innerHTML = `<pre>IP Address: ${ipArtifact.content}</pre>`;
-                            artifactList.appendChild(listItem);
-                        }
-
-                        if (credentialArtifact) {
-                            // Display Credentials
-                            const listItem = document.createElement('li');
-                            listItem.innerHTML = `<pre>${credentialArtifact.content}</pre>`;
-                            cred_artifactList.appendChild(listItem);
-
-                            // Display URL if IP Address is available
-                            if (ipArtifact) {
-                                const listItemLink = document.createElement('li');
-                                listItemLink.innerHTML = `Dashboard URL: <a href="https://${ipArtifact.content}/" target="_blank">https://${ipArtifact.content}/</a>`;
-                                cred_artifactList.appendChild(listItemLink);
-                            }
-                        }
-                    } else {
-                        const listItem = document.createElement('li');
-                        if (data.status === 'failed') {
-                            listItem.innerText = 'Failed To Creating Instance';
-                        } else {
-                            listItem.innerText = 'Creating Instance';
-                        }
-                        artifactList.appendChild(listItem);
-                        cred_artifactList.appendChild(listItem);
-                    }
-
                 });
 
-            // Call the function again after 5 seconds (adjust as needed)
             setTimeout(updateLatestPipelineStatusAndArtifacts, 5000);
         }
 
-        // Call the function on page load
         updateLatestPipelineStatusAndArtifacts();
     </script>
 </body>
