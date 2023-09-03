@@ -191,6 +191,21 @@
             font-weight: bold;
             padding: 5px;
         }
+        
+
+        #summary-container h2 {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4285F4;
+            margin-bottom: 10px;
+        }
+
+        #summary-container p {
+            margin: 0;
+            font-size: 15px;
+            color: #333;
+            padding: 5px 0;
+        }
     </style>
 </head>
 
@@ -230,10 +245,32 @@
                     <div class="txt2">Guarding with Open Source: Your Digital Safehouse</div>
                 </div>
                 <div id="checkbox-container"></div> <!-- Container for checkboxes -->
+                
             </div>
+            <div id="summary-container"></div>
         </div>
     </form>
     <script>
+        var toolInfo = {
+            'Wazuh': 'Wazuh is an open-source security monitoring platform...',
+            // Add information for other tools here
+        };
+        function toggleToolInfo(toolName) {
+            var toolInfoContainer = document.getElementById('tool-info-container');
+            var currentToolInfo = toolInfoContainer.getAttribute('data-tool');
+
+            // If the clicked tool is already displayed, hide it
+            if (currentToolInfo === toolName) {
+                toolInfoContainer.style.display = 'none';
+                toolInfoContainer.removeAttribute('data-tool');
+            } else {
+                // Show the tool information
+                toolInfoContainer.innerHTML = '<p>' + toolInfo[toolName] + '</p>';
+                toolInfoContainer.style.display = 'block';
+                toolInfoContainer.setAttribute('data-tool', toolName);
+            }
+        }
+        var selectedOptions = {};
         // Store checkbox states in local storage
         function storeCheckboxStates(toolName) {
             var checkboxes = document.querySelectorAll('#right-panel input[type="checkbox"]');
@@ -249,12 +286,20 @@
                 var checkboxState = localStorage.getItem(toolName + '_' + checkbox.id);
                 if (checkboxState === 'true') {
                     checkbox.checked = true;
+                    selectedOptions[checkbox.name] = true; // Update selected options
                 } else {
                     checkbox.checked = false;
+                    delete selectedOptions[checkbox.name]; // Remove from selected options
                 }
 
                 checkbox.addEventListener('change', function () {
+                    if (checkbox.checked) {
+                        selectedOptions[checkbox.name] = true;
+                    } else {
+                        delete selectedOptions[checkbox.name];
+                    }
                     localStorage.setItem(toolName + '_' + checkbox.id, checkbox.checked);
+                    updateSummary(); // Update the summary when a checkbox is changed
                 });
             });
         }
@@ -361,7 +406,16 @@
 
             loadCheckboxStates(toolName);
         }
-
+        
+        function updateSummary() {
+            var summaryContainer = document.getElementById('summary-container');
+            summaryContainer.innerHTML = '<h2>Selected Options</h2>';
+            for (var option in selectedOptions) {
+                if (selectedOptions.hasOwnProperty(option)) {
+                    summaryContainer.innerHTML += '<p>' + option + '</p>';
+                }
+            }
+        }
         // Function to show submit button when a tool is selected
         function showSubmitButton() {
             var submitButton = document.getElementById('submit-button');

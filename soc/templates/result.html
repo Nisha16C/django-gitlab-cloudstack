@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Pipeline Status and Artifacts</title>
+    <title>Tool Installation</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -35,24 +35,6 @@
             margin-top: 10px;
         }
 
-        .progress-container {
-            width: 100%;
-            height: 20px;
-            background-color: #e9ecef;
-            border-radius: 5px;
-            margin-top: 20px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0;
-            background-color: #007BFF;
-            /* Blue color */
-            transition: width 0.3s;
-            border-radius: 5px;
-        }
-
         .artifact-list {
             list-style: none;
             padding-left: 0;
@@ -68,80 +50,44 @@
             box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-        pre {
-            padding: 10px;
-            border-radius: 5px;
-            white-space: pre-wrap;
-            background-color: #e9ecef;
-        }
-
+      
         /* Add any additional styling here */
         .center-content {
             text-align: center;
             margin: auto;
         }
-
+        .progress-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px; /* Adjust the height as needed */
+            margin-top: 10px;
+            background-color: #b0d5fc; /* Progress bar background color */
+            border-radius: 10px;
+        }
+        .success-mark {
+            font-size: 36px; /* Adjust the size as needed */
+            color: #28a745; /* Color for the success mark */
+            margin-top: 20px;
+            display: none; /* Initially hidden */
+        }
         .loader {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-top: 4px solid #007BFF;
-            /* Blue color */
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
             border-radius: 50%;
-            width: 70px;
-            height: 70px;
-            animation: spin 2s linear infinite;
-            top: calc(25% - 10px);
-            left: 50%;
-            display: block;
-        }
-
-        .loader.green {
-            border-top-color: #28a745;
-            /* Green color */
-            border-right-color: #28a745;
-            /* Green color */
-            border-bottom-color: #28a745;
-            /* Green color */
-            border-left-color: #28a745;
-        }
-
-        .loader.red {
-            border-top-color: #f11f1f;
-            /* Red color */
-            border-right-color: #f11f1f;
-            /* Red color */
-            border-bottom-color: #f11f1f;
-            /* Red color */
-            border-left-color: #f11f1f;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            margin-top: 20px;
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .success-mark {
-            top: calc(25% - 10px);
-            left: 50%;
-            transform: translate(0%, -95%);
-            color: #28a745;
-            font-size: 70px;
-            font-weight: bold;
-            display: none;
-        }
-
-        .red-mark {
-            top: calc(25% - 10px);
-            left: 50%;
-            transform: translate(0%, -95%);
-            color: #f11f1f;
-            font-size: 70px;
-            font-weight: bold;
-            display: none;
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -149,13 +95,14 @@
 <body>
     <div class="container">
         <h1>Tool Installation Result</h1>
-        <div class="center-content loader green"></div>
-        <div class="center-content success-mark" id="success-mark">&#10004;</div>
-        <div class="center-content red-mark" id="red-mark">&#10006;</div>
         <h2>Installation Status</h2>
         <div class="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
-            <div class="progress-text" id="progress-text">0%</div>
+            <div class="completion-container" id="completion-container">
+                <div class="loader" id="loader"></div>
+                <div class="center-content success-mark" id="success-mark">&#10004;</div>
+                <div class="completion-status" id="completion-status"></div>
+            </div>
+            <progress id="pipeline-progress" class="progress-bar" value="0" max="100"></progress>
         </div>
         <p id="latest-pipeline-status" class="pipeline-status">Loading...</p>
         <h2>Instance Details</h2>
@@ -177,6 +124,52 @@
                 .then(response => response.json())
                 .then(data => {
                     const latestStatusElement = document.getElementById('latest-pipeline-status');
+                    const pipelineProgress = document.getElementById('pipeline-progress');
+                    const loader = document.getElementById('loader');
+                    const completionStatus = document.getElementById('completion-status');
+                    const completionContainer = document.getElementById('completion-container');
+                    const successMark = document.getElementById('success-mark');
+                    
+                    // Calculate progress based on pipeline status
+                    let totalProgress = 0;
+                    let numPipelines = data.pipelines.length;
+                    
+                    data.pipelines.forEach(pipeline => {
+                        if (pipeline.status === 'created') {
+                            totalProgress += 10;
+                        } else if (pipeline.status === 'pending') {
+                            totalProgress += 25;
+                        } else if (pipeline.status === 'running') {
+                            totalProgress += 50;
+                        } else if (pipeline.status === 'success') {
+                            totalProgress += 100;
+                        }
+                    });
+                    
+                    // Calculate the average progress
+                    let averageProgress = totalProgress / numPipelines;
+
+                    // Update progress bar value
+                    pipelineProgress.value = averageProgress;
+                    
+                    if (averageProgress === 100) {
+                        // Hide the loader
+                        loader.style.display = 'none';
+                        // Show the success-mark
+                        successMark.style.display = 'block';
+                        // Display completion status
+                        completionStatus.innerText = 'Completed';
+
+                        stopFetching = true;
+                    } else {
+                        // Show the loader
+                        loader.style.display = 'block';
+                        // Hide the success-mark
+                        successMark.style.display = 'none';
+                        // Hide completion status
+                        completionStatus.innerText = '';
+                    }
+
                     latestStatusElement.innerHTML = '';
                     data.pipelines.forEach(pipeline => {
                         const pipelineStatusElement = document.createElement('div');
@@ -203,45 +196,9 @@
 
                         latestStatusElement.appendChild(artifactsListElement);
                     });
-                    const progressBar = document.getElementById('progress-bar');
-                    const progressText = document.getElementById('progress-text');
-                    const loader = document.querySelector('.loader');
-                    const successMark = document.getElementById('success-mark');
-                    const redMark = document.getElementById('red-mark');
-                    if (data.status === 'success' || data.status === 'failed') {
-                        stopFetching = true;
-                    }
+                    
 
-                    let progressPercentage = 0;
-                    if (data.status === 'success' || progressPercentage === 100) {
-                        loader.style.animation = 'none';
-                        loader.classList.add('green');
-                        successMark.style.display = 'block';
-                        progressBar.style.backgroundColor = '#28a745';
-                    } else if (data.status === 'failed') {
-                        loader.style.animation = 'none';
-                        progressBar.style.backgroundColor = '#f11f1f';
-                        loader.classList.add('red');
-                        redMark.style.display = 'block';
-                    } else {
-                        loader.style.animation = 'spin 2s linear infinite';
-                        successMark.style.display = 'none';
-                        loader.classList.remove('green');
-                        redMark.style.display = 'none';
-                    }
 
-                    if (data.status === 'created') {
-                        progressPercentage = 10;
-                    } else if (data.status === 'pending') {
-                        progressPercentage = 25;
-                    } else if (data.status === 'running') {
-                        progressPercentage = 50;
-                    } else if (data.status === 'success' || data.status === 'failed') {
-                        progressPercentage = 100;
-                    }
-
-                    progressBar.style.width = progressPercentage + '%';
-                    progressText.innerText = progressPercentage + '%';
                 });
 
             setTimeout(updateLatestPipelineStatusAndArtifacts, 5000);
