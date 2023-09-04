@@ -33,6 +33,7 @@
         .pipeline-status {
             font-size: 18px;
             margin-top: 10px;
+            padding: 10px;
         }
 
         .artifact-list {
@@ -50,30 +51,41 @@
             box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-      
         /* Add any additional styling here */
         .center-content {
             text-align: center;
             margin: auto;
         }
+
         .progress-container {
             margin-top: 20px;
             text-align: center;
         }
-        
+
         .progress-bar {
             width: 100%;
-            height: 10px; /* Adjust the height as needed */
+            height: 10px;
             margin-top: 10px;
-            background-color: #b0d5fc; /* Progress bar background color */
+            background-color: #b0d5fc;
             border-radius: 10px;
         }
+
         .success-mark {
-            font-size: 36px; /* Adjust the size as needed */
-            color: #28a745; /* Color for the success mark */
+            font-size: 36px;
+            color: #28a745;
             margin-top: 20px;
-            display: none; /* Initially hidden */
+            margin-bottom: 20px;
+            display: none;
         }
+
+        .failure-mark {
+            font-size: 36px;
+            color: red;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #3498db;
@@ -83,11 +95,20 @@
             animation: spin 1s linear infinite;
             margin: 0 auto;
             margin-top: 20px;
+            margin-bottom: 20px;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        #instance-details {
+            font-size: 15px;
         }
     </style>
 </head>
@@ -100,15 +121,17 @@
             <div class="completion-container" id="completion-container">
                 <div class="loader" id="loader"></div>
                 <div class="center-content success-mark" id="success-mark">&#10004;</div>
+                <div class="center-content failure-mark" id="failure-mark">&#10060;</div>
                 <div class="completion-status" id="completion-status"></div>
             </div>
             <progress id="pipeline-progress" class="progress-bar" value="0" max="100"></progress>
         </div>
         <p id="latest-pipeline-status" class="pipeline-status">Loading...</p>
         <h2>Instance Details</h2>
-        <p>Credentials</p>
         <ul id="artifact-list" class="artifact-list"></ul>
-        <ul id="artifact-cred" class="artifact-list"></ul>
+        <div id="instance-details">
+            <!-- Instance details will be displayed here -->
+        </div>
     </div>
 
     <script>
@@ -129,11 +152,13 @@
                     const completionStatus = document.getElementById('completion-status');
                     const completionContainer = document.getElementById('completion-container');
                     const successMark = document.getElementById('success-mark');
-                    
+                    const failureMark = document.getElementById('failure-mark');
+                    const instanceDetails = document.getElementById('instance-details');
+
                     // Calculate progress based on pipeline status
                     let totalProgress = 0;
                     let numPipelines = data.pipelines.length;
-                    
+
                     data.pipelines.forEach(pipeline => {
                         if (pipeline.status === 'created') {
                             totalProgress += 10;
@@ -143,15 +168,18 @@
                             totalProgress += 50;
                         } else if (pipeline.status === 'success') {
                             totalProgress += 100;
+                        } else if (pipeline.status === 'failed') {
+                            // Handle 'failed' status separately (you can adjust the value as needed)
+                            totalProgress += 99.9;
                         }
                     });
-                    
+
                     // Calculate the average progress
                     let averageProgress = totalProgress / numPipelines;
 
                     // Update progress bar value
                     pipelineProgress.value = averageProgress;
-                    
+
                     if (averageProgress === 100) {
                         // Hide the loader
                         loader.style.display = 'none';
@@ -159,23 +187,45 @@
                         successMark.style.display = 'block';
                         // Display completion status
                         completionStatus.innerText = 'Completed';
+                        completionStatus.style.color = 'green'; // Set completion status color to green
+
+                        // Hide the failure mark
+                        failureMark.style.display = 'none';
 
                         stopFetching = true;
+                    } else if (averageProgress === 99.9) {
+                        // Hide the loader
+                        loader.style.display = 'none';
+                        // Show the failure mark
+                        failureMark.style.display = 'block';
+                        // Display completion status
+                        completionStatus.innerText = 'Failed';
+                        completionStatus.style.color = 'red'; // Set completion status color to red
+
+                        // Hide the success mark
+                        successMark.style.display = 'none';
                     } else {
                         // Show the loader
                         loader.style.display = 'block';
-                        // Hide the success-mark
+                        // Hide both success and failure marks
                         successMark.style.display = 'none';
+                        failureMark.style.display = 'none';
                         // Hide completion status
+                        completionStatus.style.color = '';
                         completionStatus.innerText = '';
+                        // Reset the progress bar color to its original color
+                        pipelineProgress.style.backgroundColor = '#b0d5fc';
                     }
 
+                    // Clear and populate the artifact list
+                    instanceDetails.innerHTML = ''; // Clear previous instance details
                     latestStatusElement.innerHTML = '';
                     data.pipelines.forEach(pipeline => {
                         const pipelineStatusElement = document.createElement('div');
-                        pipelineStatusElement.innerText = `Pipeline Status: ${pipeline.status}`;
+                        pipelineStatusElement.innerText = `Tool Installation Status: ${pipeline.status}`;
                         latestStatusElement.appendChild(pipelineStatusElement);
-
+                    })
+                    data.pipelines.forEach(pipeline => {
                         const artifactsListElement = document.createElement('ul');
                         artifactsListElement.className = 'artifact-list';
 
@@ -194,11 +244,11 @@
                             artifactsListElement.appendChild(listItem);
                         });
 
-                        latestStatusElement.appendChild(artifactsListElement);
+                        // Append the artifacts to the instance details
+                        if (pipeline.status === 'success' || pipeline.status === 'failed') {
+                            instanceDetails.appendChild(artifactsListElement);
+                        }
                     });
-                    
-
-
                 });
 
             setTimeout(updateLatestPipelineStatusAndArtifacts, 5000);

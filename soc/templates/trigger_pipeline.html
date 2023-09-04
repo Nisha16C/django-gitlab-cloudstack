@@ -64,11 +64,25 @@
             /* Adjusted to column layout */
         }
 
-        .right-panel {
+        .center-panel {
             width: 70%;
             background-color: #ffffff;
             padding: 20px;
-            margin-left: 15px;
+            margin-left: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            margin-right: 20px;
+            min-height: 80vh;
+            /* Added */
+            display: flex;
+            flex-direction: column;
+            /* Center elements vertically */
+        }
+        .right-panel {
+            width: 10%;
+            background-color: #f0f0f0;
+            padding: 20px;
+            margin-left: 5px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
             margin-right: 10px;
@@ -78,7 +92,6 @@
             flex-direction: column;
             /* Center elements vertically */
         }
-
         .tool-link {
             cursor: pointer;
             padding: 10px;
@@ -239,7 +252,7 @@
                     <input type="submit" id="submit-button" name="submit" value="Install" style="display: none;" />
                 </div>
             </div>
-            <div class="right-panel" id="right-panel">
+            <div class="center-panel" id="center-panel">
                 <div>
                     <div class="txt1">Welcome To DURGA Platform</div>
                     <div class="txt2">Guarding with Open Source: Your Digital Safehouse</div>
@@ -247,33 +260,17 @@
                 <div id="checkbox-container"></div> <!-- Container for checkboxes -->
                 
             </div>
-            <div id="summary-container"></div>
+            <div class="right-panel" id="right-panel" style="display: none;">
+                <div class="op">Selected Tools</div>
+                <div id="summary-container"></div>
+            </div>
         </div>
     </form>
     <script>
-        var toolInfo = {
-            'Wazuh': 'Wazuh is an open-source security monitoring platform...',
-            // Add information for other tools here
-        };
-        function toggleToolInfo(toolName) {
-            var toolInfoContainer = document.getElementById('tool-info-container');
-            var currentToolInfo = toolInfoContainer.getAttribute('data-tool');
-
-            // If the clicked tool is already displayed, hide it
-            if (currentToolInfo === toolName) {
-                toolInfoContainer.style.display = 'none';
-                toolInfoContainer.removeAttribute('data-tool');
-            } else {
-                // Show the tool information
-                toolInfoContainer.innerHTML = '<p>' + toolInfo[toolName] + '</p>';
-                toolInfoContainer.style.display = 'block';
-                toolInfoContainer.setAttribute('data-tool', toolName);
-            }
-        }
         var selectedOptions = {};
         // Store checkbox states in local storage
         function storeCheckboxStates(toolName) {
-            var checkboxes = document.querySelectorAll('#right-panel input[type="checkbox"]');
+            var checkboxes = document.querySelectorAll('#center-panel input[type="checkbox"]');
             checkboxes.forEach(function (checkbox) {
                 localStorage.setItem(toolName + '_' + checkbox.id, checkbox.checked);
             });
@@ -281,7 +278,7 @@
 
         // Load and update checkbox states from local storage
         function loadCheckboxStates(toolName) {
-            var checkboxes = document.querySelectorAll('#right-panel input[type="checkbox"]');
+            var checkboxes = document.querySelectorAll('#center-panel input[type="checkbox"]');
             checkboxes.forEach(function (checkbox) {
                 var checkboxState = localStorage.getItem(toolName + '_' + checkbox.id);
                 if (checkboxState === 'true') {
@@ -305,8 +302,12 @@
         }
 
         function showToolSettings(toolName) {
+            var centerPanel = document.getElementById('center-panel');
+            centerPanel.innerHTML = '';
+            centerPanel.style.width = '60%';
+
             var rightPanel = document.getElementById('right-panel');
-            rightPanel.innerHTML = '';
+            rightPanel.style.display = 'block'; // Show the right panel
 
             if (toolName === 'Log_Ingestion') {
                 var settings = '<h2>Log Ingestion Settings</h2>' +
@@ -321,7 +322,7 @@
                     '<label for="Wazuh_EFK">' +
                     '<input type="checkbox" name="Wazuh_EFK" id="Wazuh_EFK" value="Wazuh_EFK"> Wazuh + EFK' +
                     '</label>';
-                rightPanel.innerHTML = settings;
+                centerPanel.innerHTML = settings;
             } else if (toolName === 'Log_Analysis') {
                 var settings = '<h2>Log Analysis Settings</h2>' +
                     '<label for="Graylog">' +
@@ -331,7 +332,7 @@
                     '<label for="Splunk">' +
                     '<input type="checkbox" name="Splunk" id="Splunk" value+"Splunk"> Splunk HEC' +
                     '</label>';
-                rightPanel.innerHTML = settings;
+                centerPanel.innerHTML = settings;
             } else if (toolName === 'Backend_Storage') {
                 var settings = '<h2>Backend Storage Settings</h2>' +
                     '<label for="WazuhIndexer">' +
@@ -341,7 +342,7 @@
                     '<label for="Elasticsearch">' +
                     '<input type="checkbox" name="Elasticsearch" id="Elasticsearch" value="Elasticsearch"> Elasticsearch' +
                     '</label>';
-                rightPanel.innerHTML = settings;
+                centerPanel.innerHTML = settings;
             } else if (toolName === 'Visulization') {
                 var settings = '<h2>Visulization Settings</h2>' +
                     '<label for="Grafana">' +
@@ -351,7 +352,7 @@
                     '<label for="Kibana">' +
                     '<input type="checkbox" name="Kibana" id="Kibana" value="Kibana"> Kibana' +
                     '</label>';
-                rightPanel.innerHTML = settings;
+                centerPanel.innerHTML = settings;
             } else if (toolName === 'Intelligence_Enrichment') {
                 var settings = '<h2>Intelligence Enrichment Settings</h2>' +
                     '<label for="OpenCTI">' +
@@ -361,7 +362,7 @@
                     '<label for="MISP">' +
                     '<input type="checkbox" name="MISP" id="MISP" value="MISP"> MISP (Malware Information Sharing Platform)' +
                     '</label>';
-                rightPanel.innerHTML = settings;
+                centerPanel.innerHTML = settings;
             } else if (toolName === 'Case_Management') {
                 var settings = '<h2>Case Management Settings</h2>' +
                     '<label for="TheHIVE">' +
@@ -371,7 +372,7 @@
                     '<label for="RTIR">' +
                     '<input type="checkbox" name="RTIR" id="RTIR" value="RTIR"> RTIR (Request Tracker for Incident Response)' +
                     '</label>';
-                rightPanel.innerHTML = settings;
+                centerPanel.innerHTML = settings;
             } else if (toolName === 'Automate_Automate') {
                 var settings = '<h2>Automate Automate Settings</h2>' +
                     '<label for="Shuffle">' +
@@ -381,7 +382,7 @@
                     '<label for="Cortex">' +
                     '<input type="checkbox" name="Cortex" id="Cortex" value="Cortex"> Cortex' +
                     '</label>';
-                rightPanel.innerHTML = settings;
+                centerPanel.innerHTML = settings;
             } else if (toolName === 'Investigation') {
                 var settings = '<h2>Investigation Settings</h2>' +
                     '<label for="Velociraptor">' +
@@ -391,7 +392,7 @@
                     '<label for="OSINT">' +
                     '<input type="checkbox" name="OSINT" id="OSINT" value="OSINT"> OSINT Framework' +
                     '</label>';
-                rightPanel.innerHTML = settings;
+                centerPanel.innerHTML = settings;
             } else if (toolName === 'Health_Monitoring') {
                 var settings = '<h2>Health Monitoring Settings</h2>' +
                     '<label for="InfluxDB">' +
@@ -401,7 +402,7 @@
                     '<label for="Prometheus">' +
                     '<input type="checkbox" name="Prometheus" id="Prometheus" value="Prometheus"> Prometheus' +
                     '</label>';
-                rightPanel.innerHTML = settings;
+                centerPanel.innerHTML = settings;
             }
 
             loadCheckboxStates(toolName);
@@ -409,7 +410,7 @@
         
         function updateSummary() {
             var summaryContainer = document.getElementById('summary-container');
-            summaryContainer.innerHTML = '<h2>Selected Options</h2>';
+            summaryContainer.innerHTML = '';
             for (var option in selectedOptions) {
                 if (selectedOptions.hasOwnProperty(option)) {
                     summaryContainer.innerHTML += '<p>' + option + '</p>';
