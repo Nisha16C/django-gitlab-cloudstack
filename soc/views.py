@@ -17,9 +17,9 @@ def trigger_pipeline_view(request):
 
             # Dictionary mapping tool names to their corresponding branch names
             tool_branch_mapping = {
-                "SIEMxdr": "wazuh",
+                "Wazuh": "wazuh",
                 "Filebeat": "filebeat",
-                "Wazuh_EFK": "efk",
+                "Wazuh + EFK": "efk",
                 "Graylog": "graylog",
                 "Splunk": "splunk",
                 "WazuhIndexer": "wazuhindexer",

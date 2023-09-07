@@ -12,7 +12,19 @@
 
         h1 {
             color: #007BFF;
-            text-align: center
+            text-align: center;
+            position: relative;
+        }
+
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px; /* Adjust this value to control the vertical position of the underline */
+            left: 50%;
+            transform: translateX(-50%); /* Center the underline horizontally */
+            width: 25%; /* Adjust the width as needed */
+            height: 2.5px;
+            background-color: #007BFF;
         }
 
         h2 {
@@ -116,7 +128,7 @@
 <body>
     <div class="container">
         <h1>Tool Installation Result</h1>
-        <h2>Installation Status</h2>
+        <h2>Installation Status...</h2>
         <div class="progress-container">
             <div class="completion-container" id="completion-container">
                 <div class="loader" id="loader"></div>
