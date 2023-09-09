@@ -17,15 +17,16 @@ def trigger_pipeline_view(request):
 
             # Dictionary mapping tool names to their corresponding branch names
             tool_branch_mapping = {
-                "Wazuh": "wazuh",
+                "Wazuh": "efk",
                 "Filebeat": "filebeat",
-                "Wazuh + EFK": "efk",
+                # "Wazuh + EFK": "efk",
                 "Graylog": "graylog",
                 "Splunk": "splunk",
                 "WazuhIndexer": "wazuhindexer",
-                "Elasticsearch": "elasticsearch",
+                # "Elasticsearch": "elasticsearch",
                 "Grafana": "grafana",
-                "Kibana": "kibana",
+                # "Kibana": "kibana",
+                # "Fluentd": "fluentd",
                 "OpenCTI": "opencti",
                 "MISP": "misp",
                 "TheHIVE": "thehive",
@@ -38,7 +39,7 @@ def trigger_pipeline_view(request):
                 "Prometheus": "prometheus"
             }
 
-            selected_tools = []
+            selected_tools = ["efk"]
 
             # Identify which tools the user has selected
             for tool, branch_name in tool_branch_mapping.items():
