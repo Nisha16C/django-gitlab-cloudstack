@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 
@@ -247,15 +248,18 @@
             padding: 5px 0;
             font-weight: bold;
         }
-        .info-button {
-            /* background-color: #007bff; */
-            color: #333;
-            padding: 2px 7px;
-            cursor: pointer;
-            margin-left: 10px;
-            border-radius: 50%;
-            border: 1.5px solid #333;
-            font-size: 11px;
+        .tool{
+            /* border: 1px solid black; */
+            margin-bottom: 10px;
+            padding: 10px  ;
+            max-width: 50%;
+            max-height: 30%;
+            box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+        }
+        img{
+            width: 100px;
+            height: 100px;
         }
     </style>
 </head>
@@ -309,9 +313,7 @@
             </div>
         </div>
     </form>
-    <div class="info-container" style="display: none;" >
-        <p id="tool-info"></p>
-    </div>
+    
     <script>
         var selectedOptions = {};
         // Store checkbox states in local storage
@@ -321,64 +323,7 @@
                 localStorage.setItem(toolName + '_' + checkbox.id, checkbox.checked);
             });
         }
-        function showToolInfo(toolName) {
-            var infoText = '';
-            if (toolName === 'Wazuh') {
-                infoText = 'Wazuh is a security information and event management (SIEM) tool.';
-            } else if (toolName === 'Filebeat') {
-                infoText = 'Filebeat is a lightweight log shipper for forwarding log data.';
-            } else if (toolName === 'Graylog') {
-                infoText = 'Graylog is an open-source log management platform for analyzing log data.';
-            } else if (toolName === 'Flentd') {
-                infoText = 'Fluentd is an open-source data collector that unifies data collection and consumption.';
-            } else if (toolName === 'Rsyslog') {
-                infoText = 'Rsyslog is a high-performance log processing system with advanced filtering and routing.';
-            } else if (toolName === 'Splunk') {
-                infoText = 'Splunk is a platform for searching, monitoring, and analyzing machine-generated data.';
-            } else if (toolName === 'LogAnalyzer') {
-                infoText = 'LogAnalyzer (formerly known as phpLogCon) is a web-based log analysis tool.';
-            } else if (toolName === 'OSSEC') {
-                infoText = 'OSSEC is an open-source host-based intrusion detection system (HIDS).';
-            } else if (toolName === 'MISP') {
-                infoText = 'MISP (Malware Information Sharing Platform) is an open-source threat intelligence platform.';
-            } else if (toolName === 'WazuhIndexer') {
-                infoText = 'Wazuh Indexer is part of the Wazuh SIEM solution, responsible for indexing data.';
-            } else if (toolName === 'Elasticsearch') {
-                infoText = 'Elasticsearch is a distributed, RESTful search and analytics engine.';
-            } else if (toolName === 'Apache Cassandra') {
-                infoText = 'Apache Cassandra is a highly scalable and distributed NoSQL database.';
-            } else if (toolName === 'Grafana') {
-                infoText = 'Grafana is an open-source analytics and monitoring platform.';
-            } else if (toolName === 'Kibana') {
-                infoText = 'Kibana is an open-source data visualization and exploration tool.';
-            } else if (toolName === 'Cabot') {
-                infoText = 'Cabot is an open-source self-hosted infrastructure monitoring platform.';
-            } else if (toolName === 'OpenCTI') {
-                infoText = 'OpenCTI is an open-source Cyber Threat Intelligence (CTI) platform.';
-            } else if (toolName === 'TheHIVE') {
-                infoText = 'TheHIVE is an open-source and scalable incident response platform.';
-            } else if (toolName === 'RTIR') {
-                infoText = 'RTIR (Request Tracker for Incident Response) is an open-source ticketing system for incident response.';
-            } else if (toolName === 'Shuffle') {
-                infoText = 'Shuffle is an open-source task scheduling and automation platform.';
-            } else if (toolName === 'Cortex') {
-                infoText = 'Cortex is an open-source observability and automation platform.';
-            } else if (toolName === 'Velociraptor') {
-                infoText = 'Velociraptor is an open-source endpoint visibility and digital forensics tool.';
-            } else if (toolName === 'OSINT') {
-                infoText = 'OSINT Framework is an open-source framework for performing OSINT (Open Source Intelligence) investigations.';
-            } else if (toolName === 'ElastAlert') {
-                infoText = 'ElastAlert is an open-source alerting system for Elasticsearch.';
-            } else if (toolName === 'InfluxDB') {
-                infoText = 'InfluxDB is an open-source time series database designed for high availability and scalability.';
-            } else if (toolName === 'Prometheus') {
-                infoText = 'Prometheus is an open-source monitoring and alerting toolkit.';
-            }
-            alert(infoText);
-            // var toolInfoElement = document.getElementById('tool-info');
-            // toolInfoElement.textContent = infoText;
-            // toolInfoElement.style.display = 'block';
-        }
+        
         // Load and update checkbox states from local storage
         function loadCheckboxStates(toolName) {
             var checkboxes = document.querySelectorAll('#center-panel input[type="checkbox"]');
@@ -412,154 +357,143 @@
             var rightPanel = document.getElementById('right-panel');
             rightPanel.style.display = 'block'; // Show the right panel
 
-            // var infoPanel = document.getElementById('info-container');
-            // infoPanel.style.display = 'block';
-
             if (toolName === 'Log_Ingestion') {
                 var settings = '<h2>Log Ingestion Tools</h2>' +
-                    '<label for="Flentd">' +
+                    '<div class="tool"><label for="Flentd">' +
                     '<input type="checkbox" name="Flentd" id="Flentd" value="Flentd"> Flentd' +
-                    '</label>' +
+                    '</label></div>' +
                     '<br>' +
-                    '<label for="Filebeat">' +
+                    '<div class="tool"><label for="Filebeat">' +
                     '<input type="checkbox" name="Filebeat" id="Filebeat" value="Filebeat"> Filebeat' +
-                    '</label>'+
+                    '</label></div>'+
                     '<br>' +
-                    // '<label for="Wazuh + EFK">' +
+                    // '<div class="tool"><label for="Wazuh + EFK">' +
                     // '<input type="checkbox" name="Wazuh + EFK" id="Wazuh + EFK" value="Wazuh + EFK"> Wazuh + EFK ' +
-                    // '</label>' +
+                    // '</label></div>' +
                     // '<br>'+
-                    '<label for="Rsyslog">' +
+                    '<div class="tool"><label for="Rsyslog">' +
                     '<input type="checkbox" name="Rsyslog" id="Rsyslog" value="Rsyslog"> Rsyslog ' +
-                    '</label>';
+                    '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Log_Analysis') {
                 var settings = '<h2>Log Analysis Tools</h2>' +
-                    '<label for="Graylog">' +
+                    '<div class="tool"><label for="Graylog">' +
                     '<input type="checkbox" name="Graylog" id="Graylog" value="Graylog"> Graylog' +
-                    '</label>' +
+                    '</label></div>' +
                     '<br>' +
-                    '<label for="Splunk">' +
+                    '<div class="tool"><label for="Splunk">' +
                     '<input type="checkbox" name="Splunk" id="Splunk" value="Splunk"> Splunk HEC' +
-                    '</label>'+
+                    '</label></div>'+
                     '<br>' +
-                    '<label for="LogAnalyzer">' +
+                    '<div class="tool"><label for="LogAnalyzer">' +
                     '<input type="checkbox" name="LogAnalyzer" id="LogAnalyzer" value="LogAnalyzer"> LogAnalyzer (formerly known as phpLogCon)' +
-                    '</label>';
+                    '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Thread_Detection') {
                 var settings = '<h2>Thread Detection And Prevention Tools</h2>' +
-                    '<label for="Wazuh">' +
+                    '<div class="tool"><label for="Wazuh">' +
                     '<input type="checkbox" name="Wazuh" id="Wazuh" value="Wazuh"> Wazuh' +
-                    '</label>' +
+                    '<h5>Wazuh is a security information and event management (SIEM) tool. <a href="https://documentation.wazuh.com/current/index.html">Read more</a></h5>' +
+                    '<img src="{% static 'WAZUH.png' %}" alt="Wazuh Logo">' +
+                    '</label></div></div>' +
                     '<br>' +
-                    '<label for="OSSEC">' +
+                    '<div class="tool"><label for="OSSEC">' +
                     '<input type="checkbox" name="OSSEC" id="OSSEC" value="OSSEC"> OSSEC' +
-                    '</label>'+
+                    '</label></div>'+
                     '<br>' +
-                    '<label for="MISP">' +
+                    '<div class="tool"><label for="MISP">' +
                     '<input type="checkbox" name="MISP" id="MISP" value="MISP"> MISP ((Malware Information Sharing Platform))' +
-                    '</label>';
+                    '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Backend_Storage') {
                 var settings = '<h2>Backend Storage Tools</h2>' +
-                    '<label for="WazuhIndexer">' +
+                    '<div class="tool"><label for="WazuhIndexer">' +
                     '<input type="checkbox" name="WazuhIndexer" id="WazuhIndexer" value="WazuhIndexer"> Wazuh Indexer' +
-                    '</label>' +
+                    '</label></div>' +
                     '<br>' +
-                    '<label for="Elasticsearch">' +
+                    '<div class="tool"><label for="Elasticsearch">' +
                     '<input type="checkbox" name="Elasticsearch" id="Elasticsearch" value="Elasticsearch"> Elasticsearch' +
-                    '</label>'+
+                    '</label></div>'+
                     '<br>' +
-                    '<label for="Apache">' +
+                    '<div class="tool"><label for="Apache">' +
                     '<input type="checkbox" name="Apache" id="Apache" value="Apache Cassandra"> Apache Cassandra' +
-                    '</label>';
+                    '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Visulization') {
                 var settings = '<h2>Visulization Tools</h2>' +
-                    '<label for="Grafana">' +
+                    '<div class="tool"><label for="Grafana">' +
                     '<input type="checkbox" name="Grafana" id="Grafana" value="Grafana"> Grafana' +
-                    '</label>' +
+                    '</label></div>' +
                     '<br>' +
-                    '<label for="Kibana">' +
+                    '<div class="tool"><label for="Kibana">' +
                     '<input type="checkbox" name="Kibana" id="Kibana" value="Kibana"> Kibana' +
-                    '</label>'+
+                    '</label></div>'+
                     '<br>' +
-                    '<label for="Cabot">' +
+                    '<div class="tool"><label for="Cabot">' +
                     '<input type="checkbox" name="Cabot" id="Cabot" value="Cabot"> Cabot' +
-                    '</label>';
+                    '</label></div>';
                     // '<br>' +
-                    // '<label for="Flentd">' +
+                    // '<div class="tool"><label for="Flentd">' +
                     // '<input type="checkbox" name="Flentd" id="Flentd" value="Flentd"> Flentd' +
-                    // '</label>'
+                    // '</label></div>'
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Intelligence_Enrichment') {
                 var settings = '<h2>Intelligence Enrichment Tools</h2>' +
-                    '<label for="OpenCTI">' +
+                    '<div class="tool"><label for="OpenCTI">' +
                     '<input type="checkbox" name="OpenCTI" id="OpenCTI" value="OpenCTI"> OpenCTI' +
-                    '</label>' +
+                    '</label></div>' +
                     '<br>' +
-                    '<label for="MISP">' +
+                    '<div class="tool"><label for="MISP">' +
                     '<input type="checkbox" name="MISP" id="MISP" value="MISP"> MISP (Malware Information Sharing Platform)' +
-                    '</label>';
+                    '</label></div>';
                     
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Case_Management') {
                 var settings = '<h2>Case Management Tools</h2>' +
-                    '<label for="TheHIVE">' +
+                    '<div class="tool"><label for="TheHIVE">' +
                     '<input type="checkbox" name="TheHIVE" id="TheHIVE" value="TheHIVE"> TheHIVE' +
-                    '</label>' +
+                    '</label></div>' +
                     '<br>' +
-                    '<label for="RTIR">' +
+                    '<div class="tool"><label for="RTIR">' +
                     '<input type="checkbox" name="RTIR" id="RTIR" value="RTIR"> RTIR (Request Tracker for Incident Response)' +
-                    '</label>';
+                    '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Automate_Automate') {
                 var settings = '<h2>Automate Tools</h2>' +
-                    '<label for="Shuffle">' +
+                    '<div class="tool"><label for="Shuffle">' +
                     '<input type="checkbox" name="Shuffle" id="Shuffle" value="Shuffle"> Shuffle' +
-                    '</label>' +
+                    '</label></div>' +
                     '<br>' +
-                    '<label for="Cortex">' +
+                    '<div class="tool"><label for="Cortex">' +
                     '<input type="checkbox" name="Cortex" id="Cortex" value="Cortex"> Cortex' +
-                    '</label>';
+                    '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Investigation') {
                 var settings = '<h2>Investigation Tools</h2>' +
-                    '<label for="Velociraptor">' +
+                    '<div class="tool"><label for="Velociraptor">' +
                     '<input type="checkbox" name="Velociraptor" id="Velociraptor" value="Velociraptor"> Velociraptor' +
-                    '</label>' +
+                    '</label></div>' +
                     '<br>' +
-                    '<label for="OSINT">' +
+                    '<div class="tool"><label for="OSINT">' +
                     '<input type="checkbox" name="OSINT" id="OSINT" value="OSINT"> OSINT Framework' +
-                    '</label>' +
+                    '</label></div>' +
                     '<br>' +
-                    '<label for="ElastAlert">' +
+                    '<div class="tool"><label for="ElastAlert">' +
                     '<input type="checkbox" name="ElastAlert" id="ElastAlert" value="ElastAlert"> ElastAlert' +
-                    '</label>';
+                    '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Health_Monitoring') {
                 var settings = '<h2>Health Monitoring Tools</h2>' +
-                    '<label for="InfluxDB">' +
+                    '<div class="tool"><label for="InfluxDB">' +
                     '<input type="checkbox" name="InfluxDB" id="InfluxDB" value="InfluxDB"> InfluxDB' +
-                    '</label>' +
+                    '</label></div>' +
                     '<br>' +
-                    '<label for="Prometheus">' +
+                    '<div class="tool"><label for="Prometheus">' +
                     '<input type="checkbox" name="Prometheus" id="Prometheus" value="Prometheus"> Prometheus' +
-                    '</label>';
+                    '</label></div>';
                 centerPanel.innerHTML = settings;
             }
-            var checkboxes = centerPanel.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(function (checkbox) {
-                var toolName = checkbox.value;
-                var infoButton = document.createElement('span');
-                infoButton.className = 'info-button';
-                infoButton.textContent = 'i';
-                infoButton.addEventListener('click', function () {
-                    showToolInfo(toolName);
-                });
-                checkbox.parentNode.appendChild(infoButton);
-            });
+            
 
             loadCheckboxStates(toolName);
         }
