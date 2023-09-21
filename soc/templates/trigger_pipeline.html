@@ -260,6 +260,7 @@
         img{
             width: 100px;
             height: 100px;
+            object-fit: contain;
         }
     </style>
 </head>
@@ -353,6 +354,7 @@
             var centerPanel = document.getElementById('center-panel');
             centerPanel.innerHTML = '';
             centerPanel.style.width = '50%';
+            centerPanel.style.overflowY = 'auto';
 
             var rightPanel = document.getElementById('right-panel');
             rightPanel.style.display = 'block'; // Show the right panel
@@ -393,16 +395,20 @@
                 var settings = '<h2>Thread Detection And Prevention Tools</h2>' +
                     '<div class="tool"><label for="Wazuh">' +
                     '<input type="checkbox" name="Wazuh" id="Wazuh" value="Wazuh"> Wazuh' +
-                    '<h5>Wazuh is a security information and event management (SIEM) tool. <a href="https://documentation.wazuh.com/current/index.html">Read more</a></h5>' +
+                    '<h5>Wazuh helps monitoring cloud infrastructure at an API level, using integration modules that are able to pull security data from well known cloud providers, such as Amazon AWS, Azure or Google Cloud. In addition, Wazuh provides rules to assess the configuration of your cloud environment, easily spotting weaknesses. <a href="https://documentation.wazuh.com/current/index.html">Read more</a></h5>' +
                     '<img src="{% static 'WAZUH.png' %}" alt="Wazuh Logo">' +
                     '</label></div></div>' +
                     '<br>' +
                     '<div class="tool"><label for="OSSEC">' +
                     '<input type="checkbox" name="OSSEC" id="OSSEC" value="OSSEC"> OSSEC' +
+                    '<h5>OSSEC (Open Source HIDS SECurity) is a free, open-source host-based intrusion detection system (HIDS). It performs log analysis, integrity checking, Windows registry monitoring, rootkit detection, time-based alerting, and active response. <a href="https://documentation.wazuh.com/current/index.html">Read more</a></h5>' +
+                    '<img src="{% static 'ossec.png' %}" alt="Wazuh Logo">' +
                     '</label></div>'+
                     '<br>' +
                     '<div class="tool"><label for="MISP">' +
-                    '<input type="checkbox" name="MISP" id="MISP" value="MISP"> MISP ((Malware Information Sharing Platform))' +
+                    '<input type="checkbox" name="MISP" id="MISP" value="MISP"> MISP (Malware Information Sharing Platform)' +
+                    '<h5>MISP is an open source software and it is also a large community of MISP users creating, maintaining and operating communities of users or organizations sharing information about threats or cyber security indicators worldwide. <a href="https://documentation.wazuh.com/current/index.html">Read more</a></h5>' +
+                    '<img src="{% static 'misp.png' %}" alt="Wazuh Logo">' +
                     '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Backend_Storage') {
