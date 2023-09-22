@@ -82,6 +82,9 @@
             display: flex;
             flex-direction: column;
             /* Center elements vertically */
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
         }
         /* .info-container{
             width: 20%;
@@ -253,7 +256,7 @@
             margin-bottom: 10px;
             padding: 10px  ;
             max-width: 50%;
-            max-height: 30%;
+            max-height: 50%;
             box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
             border-radius: 15px;
         }
@@ -261,6 +264,7 @@
             width: 100px;
             height: 100px;
             object-fit: contain;
+            margin-top: 2px;
         }
     </style>
 </head>
@@ -293,6 +297,7 @@
                 </div>
                 <div class="tool-link" onclick="showToolSettings('Health_Monitoring'); showSubmitButton();">Health
                     Monitoring</div>
+                
                 <!-- <div class="install-button-container">
                     <input type="submit" id="submit-button" name="submit" value="Install" style="display: none;" />
                 </div> -->
@@ -361,12 +366,14 @@
 
             if (toolName === 'Log_Ingestion') {
                 var settings = '<h2>Log Ingestion Tools</h2>' +
-                    '<div class="tool"><label for="Flentd">' +
-                    '<input type="checkbox" name="Flentd" id="Flentd" value="Flentd"> Flentd' +
+                    '<div class="tool"><label for="Fluentd">' +
+                    '<input type="checkbox" name="Fluentd" id="Fluentd" value="Fluentd"> Fluentd ' +
+                    '<img src="{% static 'fluentd.png' %}" alt="Fluentd Logo">' +
                     '</label></div>' +
                     '<br>' +
                     '<div class="tool"><label for="Filebeat">' +
                     '<input type="checkbox" name="Filebeat" id="Filebeat" value="Filebeat"> Filebeat' +
+                    '<img src="{% static 'filebeat.png' %}" alt="Wazuh Logo">' +
                     '</label></div>'+
                     '<br>' +
                     // '<div class="tool"><label for="Wazuh + EFK">' +
@@ -375,20 +382,24 @@
                     // '<br>'+
                     '<div class="tool"><label for="Rsyslog">' +
                     '<input type="checkbox" name="Rsyslog" id="Rsyslog" value="Rsyslog"> Rsyslog ' +
+                    '<img src="{% static 'rsyslog.png' %}" alt="Wazuh Logo">' +
                     '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Log_Analysis') {
                 var settings = '<h2>Log Analysis Tools</h2>' +
                     '<div class="tool"><label for="Graylog">' +
                     '<input type="checkbox" name="Graylog" id="Graylog" value="Graylog"> Graylog' +
+                    '<img src="{% static 'graylog.png' %}" alt="Wazuh Logo">' +
                     '</label></div>' +
                     '<br>' +
                     '<div class="tool"><label for="Splunk">' +
                     '<input type="checkbox" name="Splunk" id="Splunk" value="Splunk"> Splunk HEC' +
+                    '<img src="{% static 'splunk.png' %}" alt="Wazuh Logo">' +
                     '</label></div>'+
                     '<br>' +
                     '<div class="tool"><label for="LogAnalyzer">' +
                     '<input type="checkbox" name="LogAnalyzer" id="LogAnalyzer" value="LogAnalyzer"> LogAnalyzer (formerly known as phpLogCon)' +
+                    '<img src="{% static 'loganalyzer.png' %}" alt="Wazuh Logo">' +
                     '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Thread_Detection') {
@@ -415,28 +426,34 @@
                 var settings = '<h2>Backend Storage Tools</h2>' +
                     '<div class="tool"><label for="WazuhIndexer">' +
                     '<input type="checkbox" name="WazuhIndexer" id="WazuhIndexer" value="WazuhIndexer"> Wazuh Indexer' +
+                    '<img src="{% static 'wazuhindexer.png' %}" alt="Wazuh Logo">' +
                     '</label></div>' +
                     '<br>' +
                     '<div class="tool"><label for="Elasticsearch">' +
                     '<input type="checkbox" name="Elasticsearch" id="Elasticsearch" value="Elasticsearch"> Elasticsearch' +
+                    '<img src="{% static 'elasticsearch.png' %}" alt="Wazuh Logo">' +
                     '</label></div>'+
                     '<br>' +
                     '<div class="tool"><label for="Apache">' +
                     '<input type="checkbox" name="Apache" id="Apache" value="Apache Cassandra"> Apache Cassandra' +
+                    '<img src="{% static 'apache.png' %}" alt="Wazuh Logo">' +
                     '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Visulization') {
                 var settings = '<h2>Visulization Tools</h2>' +
                     '<div class="tool"><label for="Grafana">' +
                     '<input type="checkbox" name="Grafana" id="Grafana" value="Grafana"> Grafana' +
+                    '<img src="{% static 'grafana.png' %}" alt="Wazuh Logo">' +
                     '</label></div>' +
                     '<br>' +
                     '<div class="tool"><label for="Kibana">' +
                     '<input type="checkbox" name="Kibana" id="Kibana" value="Kibana"> Kibana' +
+                    '<img src="{% static 'kibana.png' %}" alt="Wazuh Logo">' +
                     '</label></div>'+
                     '<br>' +
                     '<div class="tool"><label for="Cabot">' +
                     '<input type="checkbox" name="Cabot" id="Cabot" value="Cabot"> Cabot' +
+                    '<img src="{% static 'cabot.png' %}" alt="Wazuh Logo">' +
                     '</label></div>';
                     // '<br>' +
                     // '<div class="tool"><label for="Flentd">' +
@@ -447,10 +464,12 @@
                 var settings = '<h2>Intelligence Enrichment Tools</h2>' +
                     '<div class="tool"><label for="OpenCTI">' +
                     '<input type="checkbox" name="OpenCTI" id="OpenCTI" value="OpenCTI"> OpenCTI' +
+                    '<img src="{% static 'opencti.png' %}" alt="Wazuh Logo">' +
                     '</label></div>' +
                     '<br>' +
                     '<div class="tool"><label for="MISP">' +
                     '<input type="checkbox" name="MISP" id="MISP" value="MISP"> MISP (Malware Information Sharing Platform)' +
+                    '<img src="{% static 'misp.png' %}" alt="Wazuh Logo">' +
                     '</label></div>';
                     
                 centerPanel.innerHTML = settings;
@@ -458,44 +477,53 @@
                 var settings = '<h2>Case Management Tools</h2>' +
                     '<div class="tool"><label for="TheHIVE">' +
                     '<input type="checkbox" name="TheHIVE" id="TheHIVE" value="TheHIVE"> TheHIVE' +
+                    '<img src="{% static 'thehive.png' %}" alt="Wazuh Logo">' +
                     '</label></div>' +
                     '<br>' +
                     '<div class="tool"><label for="RTIR">' +
                     '<input type="checkbox" name="RTIR" id="RTIR" value="RTIR"> RTIR (Request Tracker for Incident Response)' +
+                    '<img src="{% static 'rtir.png' %}" alt="Wazuh Logo">' +
                     '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Automate_Automate') {
                 var settings = '<h2>Automate Tools</h2>' +
                     '<div class="tool"><label for="Shuffle">' +
                     '<input type="checkbox" name="Shuffle" id="Shuffle" value="Shuffle"> Shuffle' +
+                    '<img src="{% static 'shuffle.png' %}" alt="Wazuh Logo">' +
                     '</label></div>' +
                     '<br>' +
                     '<div class="tool"><label for="Cortex">' +
                     '<input type="checkbox" name="Cortex" id="Cortex" value="Cortex"> Cortex' +
+                    '<img src="{% static 'cortex.png' %}" alt="Wazuh Logo">' +
                     '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Investigation') {
                 var settings = '<h2>Investigation Tools</h2>' +
                     '<div class="tool"><label for="Velociraptor">' +
                     '<input type="checkbox" name="Velociraptor" id="Velociraptor" value="Velociraptor"> Velociraptor' +
+                    '<img src="{% static 'velociraptor.png' %}" alt="Wazuh Logo">' +
                     '</label></div>' +
                     '<br>' +
                     '<div class="tool"><label for="OSINT">' +
                     '<input type="checkbox" name="OSINT" id="OSINT" value="OSINT"> OSINT Framework' +
+                    '<img src="{% static 'osint.png' %}" alt="Wazuh Logo">' +
                     '</label></div>' +
                     '<br>' +
                     '<div class="tool"><label for="ElastAlert">' +
                     '<input type="checkbox" name="ElastAlert" id="ElastAlert" value="ElastAlert"> ElastAlert' +
+                    '<img src="{% static 'elastalert.png' %}" alt="Wazuh Logo">' +
                     '</label></div>';
                 centerPanel.innerHTML = settings;
             } else if (toolName === 'Health_Monitoring') {
                 var settings = '<h2>Health Monitoring Tools</h2>' +
                     '<div class="tool"><label for="InfluxDB">' +
                     '<input type="checkbox" name="InfluxDB" id="InfluxDB" value="InfluxDB"> InfluxDB' +
+                    '<img src="{% static 'influxdb.png' %}" alt="Wazuh Logo">' +
                     '</label></div>' +
                     '<br>' +
                     '<div class="tool"><label for="Prometheus">' +
                     '<input type="checkbox" name="Prometheus" id="Prometheus" value="Prometheus"> Prometheus' +
+                    '<img src="{% static 'prometheus.png' %}" alt="Wazuh Logo">' +
                     '</label></div>';
                 centerPanel.innerHTML = settings;
             }
