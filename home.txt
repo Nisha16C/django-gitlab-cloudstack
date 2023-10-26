@@ -1,0 +1,47 @@
+<script setup lang="ts">
+
+</script>
+
+<template>
+  <header class="fixed top-0 z-50 bg-red-400 w-full">
+    <nav class="mx-auto flex w-11/12 items-center justify-between p-6 lg:px-8" aria-label="Global">
+      <div class="flex lg:flex-1">
+        <a href="#" class="-m-1.5 p-1.5">
+          <h1 class="text-lg font-semibold">Big Animal</h1>
+        </a>
+      </div>
+
+      <div class="hidden lg:flex lg:gap-x-12">
+        <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Products</a>
+        <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Features</a>
+        <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Marketplace</a>
+        <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Company</a>
+      </div>
+      <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+        <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Log in <span
+            aria-hidden="true">&rarr;</span></a>
+      </div>
+    </nav>
+
+  </header>
+  <!-- transition-transform -translate-x-full -->
+
+  <aside id="logo-sidebar"
+    class="fixed top-0 z-40 left-0 w-72 h-screen pt-20 bg-slate-800"
+    aria-label="Sidebar">
+    
+    <div class="h-full px-3 pb-4 overflow-y-auto">
+            <ul class="space-y-2 font-medium">
+               <li>
+                  <a href="#HOM" class="flex items-center p-2 mt-3 text-gray-200 rounded-lg">
+                     <span class="ml-3">DURGA Dashboard</span>
+                  </a>
+               </li>
+               <hr>
+               <li>
+                  <a href="#" class=""></a>
+               </li>
+            </ul>
+            </div>   
+  </aside>
+</template>
